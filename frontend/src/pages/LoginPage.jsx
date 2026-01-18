@@ -1,15 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import truckImage from "../assets/truck-port-ship-fleet-management.png";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 function LoginPage() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await api.post("api/token/", formData);
+
+      const { access, refresh } = response.data;
+
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
+
+      // 🔑 Decode token to get role
+      const decoded = jwtDecode(access);
+      const role = decoded.role;
+      localStorage.setItem("role", role);
+
+      // 🧭 Role-based navigation
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "manager") {
+        navigate("/manager-dashboard");
+      } else {
+        navigate("/user/dashboard");
+      }
+    } catch (err) {
+      setError("Invalid username or password");
+      console.error(err.response?.data || err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       {/* Login Form */}
       <form
+        onSubmit={handleLogin}
         className="bg-dark text-white p-4 rounded shadow formbg"
         style={{ maxWidth: "400px", width: "100%" }}
       >
-        <h3 className="mb-4 text-center" >Brighter Logistics Management System</h3>
+        <h3 className="mb-4 text-center">
+          Brighter Logistics Management System
+        </h3>
 
         <div className="mb-3 text-start">
           <label htmlFor="username" className="form-label">
@@ -21,6 +66,9 @@ function LoginPage() {
             id="username"
             className="form-control"
             placeholder="Enter username"
+            onChange={(e) =>
+              setFormData({ ...formData, username: e.target.value })
+            }
           />
         </div>
 
@@ -34,11 +82,14 @@ function LoginPage() {
             id="password"
             className="form-control"
             placeholder="Enter password"
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
           />
         </div>
 
         <button type="submit" className="btn btn-primary w-100">
-          Login
+          {isLoading ? "Logging In..." : "Login"}
         </button>
 
         <p className="mt-3">

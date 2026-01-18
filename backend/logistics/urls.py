@@ -4,12 +4,14 @@ from .views import (DriverListCreateView, TruckListCreateView,
                     DriverRegisterView, RegisterView,
                     JourneyListCreateView, PartyListCreateView, 
                     DriverRetrieveUpdateDestroyView,TruckRetrieveUpdateDestroyView,
-                    PartyRetrieveUpdateDestroyView,JourneyRetrieveUpdateDestroyView
+                    PartyRetrieveUpdateDestroyView,JourneyRetrieveUpdateDestroyView,
+                    CustomTokenObtainPairView
                     )
 
 urlpatterns = [
 
     path('user/register/', RegisterView.as_view(), name='user-register-view'),
+    path('token/', CustomTokenObtainPairView.as_view(), name='custom-view'),
 
     path('drivers/', DriverListCreateView.as_view(), name='driver-list-create'),
     path('drivers/<uuid:pk>/', DriverRetrieveUpdateDestroyView.as_view(), name='driver-retrieve-update-destroy'),

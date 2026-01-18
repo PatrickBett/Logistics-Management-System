@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Driver, Journey, Party, Truck, User
 from .serializers import (DriverSerializer, UserSerializer,DriverRegisterSerializer ,
                         TruckSerializer, JourneySerializer, PartySerializer,
-                        RegisterSerializer)
+                        RegisterSerializer,CustomTokenObtainPairSerializer)
 # Create your views here.
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 class RegisterView(generics.CreateAPIView):
     queryset=User.objects.all()
     serializer_class = RegisterSerializer
