@@ -44,6 +44,7 @@ function RegisterPage() {
         password: "",
         confirm_password: "",
       });
+      toast.success("Registered Successful");
     } catch (error) {
       console.log(error);
     }

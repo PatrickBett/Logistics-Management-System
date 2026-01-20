@@ -14,7 +14,7 @@ class RegisterView(generics.CreateAPIView):
     queryset=User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
-class DriverListCreateView(generics.ListAPIView):
+class DriverListCreateView(generics.ListCreateAPIView):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
     permission_classes =  [AllowAny]

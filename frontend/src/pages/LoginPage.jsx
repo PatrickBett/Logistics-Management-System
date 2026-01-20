@@ -3,6 +3,7 @@ import truckImage from "../assets/truck-port-ship-fleet-management.png";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ function LoginPage() {
 
       // 🔑 Decode token to get role
       const decoded = jwtDecode(access);
+      console.log(decoded);
       const role = decoded.role;
       localStorage.setItem("role", role);
 
@@ -36,6 +38,7 @@ function LoginPage() {
       } else {
         navigate("/user/dashboard");
       }
+      toast.success("Logged In Successfully");
     } catch (err) {
       setError("Invalid username or password");
       console.error(err.response?.data || err);
