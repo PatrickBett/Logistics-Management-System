@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import AddDriver from "../Modals/AddDriver";
@@ -7,73 +7,24 @@ import { MdModeEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import EditDriver from "../Modals/EditDriver";
+import { AdminContext } from "../../contexts/AdminContext";
 
 function Drivers() {
-  const [drivers, setDrivers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isEditingDriver, setEditingDriver] = useState(null);
+  const {
+    drivers,
+    isLoading,
+    setIsLoading,
+    isEditingDriver,
+    setEditingDriver,
+    fetchDrivers,
+    setDrivers,
+    handleEdit,
+    handleAddDriver,
+    handleDelete,
+  } = useContext(AdminContext);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
-  const driversPerPage = 7;
-
-  const fetchDrivers = async () => {
-    setIsLoading(true);
-    try {
-      const res = await api.get("api/drivers/");
-      setDrivers(res.data);
-      setTotalPages(Math.ceil(res.data.length / driversPerPage));
-      console.log(res.data);
-      setIsLoading(false);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchDrivers();
-  }, []);
-  const handleAddDriver = (newDriver) => {
-    setDrivers((prev) => [...prev, newDriver]); // ✅ spread
-  };
-
-  const handleEdit = async (updatedDriverData) => {
-    setIsLoading(true);
-    try {
-      const res = await api.put(
-        `api/drivers/${updatedDriverData.id}/`,
-        updatedDriverData,
-      );
-      // res.data is the updated driver object returned from backend
-      const updatedDriver = res.data;
-
-      // Update drivers state
-      setDrivers((prev) =>
-        prev.map((d) => (d.id === updatedDriver.id ? updatedDriver : d)),
-      );
-
-      toast.success("Edit Successfull!!!");
-      // Close modal programmatically
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    setIsLoading(true);
-    try {
-      const res = await api.delete(`api/drivers/${id}/`);
-      setDrivers((prev) => prev.filter((d) => d.id !== id));
-      toast.error("Deleted successfully");
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   const handlePageChange = (page) => {
     setCurrentPage(page);
     // Optional: scroll to top of table when page changes
@@ -81,6 +32,8 @@ function Drivers() {
   };
 
   // Calculate indexes for slicing
+  const driversPerPage = 7;
+  const totalPages = Math.ceil(drivers.length / driversPerPage);
   const indexOfLastDriver = currentPage * driversPerPage;
   const indexOfFirstDriver = indexOfLastDriver - driversPerPage;
 
@@ -150,7 +103,7 @@ function Drivers() {
           </table>
           {/* Pagination */}
           <nav>
-            <ul className="pagination">
+            <ul className="pagination ">
               {[...Array(totalPages)].map((_, idx) => (
                 <li
                   key={idx}

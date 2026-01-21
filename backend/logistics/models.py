@@ -31,6 +31,8 @@ class Driver(models.Model):
     phone = models.CharField(max_length=12)
     email = models.CharField(max_length=60)
     trips = models.PositiveBigIntegerField(default=0)
+    leave_date = models.DateTimeField(null=True, blank=True)
+    return_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(choices=ACTION_CHOICES, default='isAvailable')
 
     def __str__(self):
@@ -57,9 +59,9 @@ class Truck(models.Model):
         ('isGood','Good Condition'),  
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    truck_no = models.CharField(max_length=10) 
+    truck_no = models.CharField(max_length=10, unique=True) 
     type = models.CharField(max_length=20)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    driver = models.OneToOneField(Driver, on_delete=models.CASCADE, null=True, blank=True)
     last_maintenance = models.DateTimeField()
     next_due = models.DateTimeField()
     status = models.CharField(choices= ACTION_CHOICES, default='isGood')

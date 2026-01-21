@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-function EditDriver({ driver, handleEdit }) {
+function EditDriver({ driver, handleEdit, toDateTimeLocal }) {
   console.log("Driver Id:", driver);
   const [license_no, setLicenseNo] = useState("");
   const [name, setName] = useState("");
@@ -9,6 +9,8 @@ function EditDriver({ driver, handleEdit }) {
   const [email, setEmail] = useState("");
   const [trips, setTrips] = useState(0);
   const [status, setStatus] = useState("");
+  const [leaveDate, setLeaveDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const handleUpdateClick = () => {
     handleEdit({
@@ -19,6 +21,8 @@ function EditDriver({ driver, handleEdit }) {
       email,
       trips,
       status,
+      leave_date: leaveDate,
+      return_date: returnDate,
     });
   };
 
@@ -30,6 +34,8 @@ function EditDriver({ driver, handleEdit }) {
       setEmail(driver.email);
       setTrips(driver.trips);
       setStatus(driver.status);
+      setLeaveDate(toDateTimeLocal(driver.leave_date));
+      setReturnDate(toDateTimeLocal(driver.return_date));
     }
   }, [driver]);
   return (
@@ -102,6 +108,24 @@ function EditDriver({ driver, handleEdit }) {
                   <option value="onDuty">On Duty</option>
                   <option value="onLeave">On Leave</option>
                 </select>
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Leave Date</label>
+                <input
+                  type="datetime-local"
+                  className="form-control"
+                  value={leaveDate}
+                  onChange={(e) => setLeaveDate(e.target.value)}
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label">Return Date</label>
+                <input
+                  type="datetime-local"
+                  className="form-control"
+                  value={returnDate}
+                  readOnly
+                />
               </div>
             </form>
           </div>

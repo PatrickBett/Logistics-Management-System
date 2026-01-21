@@ -1,5 +1,6 @@
 import React from "react";
-
+import { AdminContext } from "../../contexts/AdminContext";
+import { useContext } from "react";
 import {
   FaTruck,
   FaUser,
@@ -9,9 +10,9 @@ import {
   FaRoute,
 } from "react-icons/fa";
 
-
-
 function Dashboard() {
+  const { drivers, trucks } = useContext(AdminContext);
+  console.log("Dashboard Drivers", drivers);
   return (
     <div className="container-fluid">
       <h2 className="mb-4">Welcome Admin</h2>
@@ -23,7 +24,7 @@ function Dashboard() {
               <FaUser className="me-2" />
               Total Drivers
             </h5>
-            <p className="fw-bold fs-4">120</p>
+            <p className="fw-bold fs-4">{drivers.length}</p>
           </div>
         </div>
 
@@ -33,7 +34,7 @@ function Dashboard() {
               <FaTruck className="me-2" />
               Total Trucks
             </h5>
-            <p className="fw-bold fs-4">45</p>
+            <p className="fw-bold fs-4">{trucks.length}</p>
           </div>
         </div>
 
@@ -57,22 +58,39 @@ function Dashboard() {
       </div>
 
       <div className="row">
-        <div className="col-sm-6">
-          <h5>Unavailable Drivers</h5>
+        <div className="table-responsive col-sm-6">
+          <h5>Drivers on Leave</h5>
           <table className="table table-bordered g-3">
             <thead>
               <tr>
                 <th>Name</th>
                 <th>License No</th>
-                <th>Status</th>
+                <th>Phone No</th>
+                <th>Leave Date</th>
+                <th>Return Date</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>James Kariuki</td>
-                <td>DL234</td>
-                <td>On Leave</td>
-              </tr>
+              {drivers.filter((driver) => driver.status === "onLeave").length >
+              1 ? (
+                drivers
+                  .filter((driver) => driver.status === "onLeave")
+                  .map((driver) => (
+                    <tr key={driver.id}>
+                      <td>{driver.name}</td>
+                      <td>{driver.license_no}</td>
+                      <td>{driver.phone}</td>
+                      <td>{driver.leave_date}</td>
+                      <td>{driver.return_date}</td>
+                    </tr>
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center">
+                    No Driver Currently On Leave
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

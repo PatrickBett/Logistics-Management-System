@@ -4,6 +4,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import { FaTruck } from "react-icons/fa";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -55,6 +56,9 @@ function LoginPage() {
         className="bg-dark text-white p-4 rounded shadow formbg"
         style={{ maxWidth: "400px", width: "100%" }}
       >
+        <h1 className="text-center">
+          <FaTruck style={{ color: "#FF5349" }} />
+        </h1>
         <h3 className="mb-4 text-center">
           Brighter Logistics Management System
         </h3>

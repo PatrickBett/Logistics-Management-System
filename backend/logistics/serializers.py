@@ -82,6 +82,8 @@ class DriverRegisterSerializer(serializers.ModelSerializer):
        
 
 class TruckSerializer(serializers.ModelSerializer):
+   
+    driver_info = DriverSerializer(source='driver', read_only=True)
     class Meta:
         model = Truck
         fields = '__all__'
