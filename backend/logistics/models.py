@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 from django.utils import timezone
+from datetime import timedelta
 # Create your models here.
 
 class User(AbstractUser):
@@ -40,8 +41,10 @@ class Driver(models.Model):
         return f'{self.name} is {self.status}'
     def save(self, *args, **kwargs):
         # Update leave_date automatically when status is changed to 'onLeave'
-        if self.status == 'onLeave':
+        if self.status == 'onLeave' and not self.leave_date:
             self.leave_date = timezone.now()
+            self.return_date = self.leave_date + timedelta(days=4)
+
             print("Leave automated")
         super().save(*args, **kwargs)
 class Party(models.Model):

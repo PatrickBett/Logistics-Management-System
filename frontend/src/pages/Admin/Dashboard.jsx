@@ -15,8 +15,8 @@ function Dashboard() {
   const { drivers, trucks, journeys, parties } = useContext(AdminContext);
   console.log("Dashboard Drivers", drivers);
   return (
-    <div className="container-fluid">
-      <h2 className="mb-4">Welcome Admin</h2>
+    <div>
+      <h2 className="mb-4 mt-3">Welcome Admin</h2>
 
       <div className="row g-3 mb-5">
         <div className="col-12 col-sm-6 col-md-3">
@@ -59,8 +59,8 @@ function Dashboard() {
       </div>
 
       <div className="row">
+        <h5>Drivers on Leave</h5>
         <div className="table-responsive col-sm-6">
-          <h5>Drivers on Leave</h5>
           <table className="table table-bordered g-3">
             <thead>
               <tr>
@@ -81,8 +81,16 @@ function Dashboard() {
                       <td>{driver.name}</td>
                       <td>{driver.license_no}</td>
                       <td>{driver.phone}</td>
-                      <td>{driver.leave_date ?driver.leave_date.slice(0, 16):''}</td>
-                      <td>{driver.return_date ? driver.return_date.slice(0, 16):''}</td>
+                      <td>
+                        {driver.leave_date
+                          ? driver.leave_date.slice(0, 16)
+                          : ""}
+                      </td>
+                      <td>
+                        {driver.return_date
+                          ? driver.return_date.slice(0, 16)
+                          : ""}
+                      </td>
                     </tr>
                   ))
               ) : (
@@ -97,7 +105,9 @@ function Dashboard() {
         </div>
         <div className="col-sm-6">
           <h5>Trips By Drivers</h5>
-          <TripsChart className="mt-5 pt-5" />
+          <div>
+            <TripsChart className="mt-5 pt-5" />
+          </div>
         </div>
       </div>
     </div>

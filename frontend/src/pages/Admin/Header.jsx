@@ -6,7 +6,8 @@ function Header({ onToggleSidebar, sidebarOpen }) {
   return (
     <div
       className="row text-light p-3 px-5 align-items-center"
-      style={{ backgroundColor: "#1a839a" }}
+      style={{ borderBottom: "2px solid #e5e7eb" }}
+      // style={{ backgroundColor: "#1a839a" }}
     >
       <div className="col">
         <button className="btn btn-dark d-md-none" onClick={onToggleSidebar}>
@@ -19,7 +20,7 @@ function Header({ onToggleSidebar, sidebarOpen }) {
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/250px-Outdoors-man-portrait_%28cropped%29.jpg"
           style={{ width: "40px", height: "40px", borderRadius: "50%" }}
         />{" "}
-        <IoMdArrowDropdown />
+        <IoMdArrowDropdown style={{ color: "black" }} />
       </div>
     </div>
   );

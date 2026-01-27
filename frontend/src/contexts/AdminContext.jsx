@@ -199,6 +199,12 @@ export const AdminProvider = ({ children }) => {
       toast.error("Error Editing Journey");
     }
   };
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   return (
     <AdminContext.Provider

@@ -21,7 +21,7 @@ api.interceptors.request.use(
         localStorage.removeItem("access")
         localStorage.removeItem("refresh")
         localStorage.removeItem("role")
-        window.location.reload('/')
+        // window.location.reload('/')
         
       }
       

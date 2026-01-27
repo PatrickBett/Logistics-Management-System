@@ -109,25 +109,25 @@ function Drivers() {
               )}
             </tbody>
           </table>
-          {/* Pagination */}
-          <nav>
-            <ul className="pagination ">
-              {[...Array(totalPages)].map((_, idx) => (
-                <li
-                  key={idx}
-                  className={`page-item ${currentPage === idx + 1 ? "active" : ""}`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => handlePageChange(idx + 1)}
-                  >
-                    {idx + 1}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
         </div>
+        {/* Pagination */}
+        <nav>
+          <ul className="pagination ">
+            {[...Array(totalPages)].map((_, idx) => (
+              <li
+                key={idx}
+                className={`page-item ${currentPage === idx + 1 ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
       <AddDriver handleAddDriver={handleAddDriver} />
       <EditDriver handleEdit={handleEdit} driver={isEditingDriver} />
