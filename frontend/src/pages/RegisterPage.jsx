@@ -3,9 +3,11 @@ import { useState } from "react";
 import api from "../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
   const [error, setError] = useState("");
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     license_no: "",
     username: "",
@@ -44,9 +46,10 @@ function RegisterPage() {
         password: "",
         confirm_password: "",
       });
-      toast.success("Registered Successful");
+      navigate("/");
     } catch (error) {
       console.log(error);
+      toast.error("ERROR Registering!!");
     }
   };
   return (

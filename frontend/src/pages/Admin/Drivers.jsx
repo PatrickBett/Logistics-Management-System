@@ -72,33 +72,41 @@ function Drivers() {
               </tr>
             </thead>
             <tbody>
-              {currentDrivers.map((driver) => (
-                <tr key={driver.id}>
-                  <td>{driver.license_no}</td>
-                  <td>{driver.name}</td>
-                  <td>{driver.phone}</td>
-                  <td>{driver.email}</td>
-                  <td>{driver.trips}</td>
-                  <td>{driver.status}</td>
-                  <td className="d-flex align-items-center gap-2">
-                    <button
-                      className="btn btn-primary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#edit-driver-modal"
-                      onClick={() => setEditingDriver(driver)}
-                    >
-                      <MdModeEdit />
-                    </button>
+              {currentDrivers.length > 0 ? (
+                currentDrivers.map((driver) => (
+                  <tr key={driver.id}>
+                    <td>{driver.license_no}</td>
+                    <td>{driver.name}</td>
+                    <td>{driver.phone}</td>
+                    <td>{driver.email}</td>
+                    <td>{driver.trips}</td>
+                    <td>{driver.status}</td>
+                    <td className="d-flex align-items-center gap-2">
+                      <button
+                        className="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit-driver-modal"
+                        onClick={() => setEditingDriver(driver)}
+                      >
+                        <MdModeEdit />
+                      </button>
 
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(driver.id)}
-                    >
-                      <MdDelete />
-                    </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDelete(driver.id)}
+                      >
+                        <MdDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="text-center" colSpan={7}>
+                    No Driver
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
           {/* Pagination */}

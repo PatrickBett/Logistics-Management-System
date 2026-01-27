@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-function EditDriver({ driver, handleEdit, toDateTimeLocal }) {
+function EditDriver({ driver, handleEdit }) {
   console.log("Driver Id:", driver);
   const [license_no, setLicenseNo] = useState("");
   const [name, setName] = useState("");
@@ -34,8 +34,8 @@ function EditDriver({ driver, handleEdit, toDateTimeLocal }) {
       setEmail(driver.email);
       setTrips(driver.trips);
       setStatus(driver.status);
-      setLeaveDate(toDateTimeLocal(driver.leave_date));
-      setReturnDate(toDateTimeLocal(driver.return_date));
+      setLeaveDate(driver.leave_date);
+      setReturnDate(driver.return_date);
     }
   }, [driver]);
   return (

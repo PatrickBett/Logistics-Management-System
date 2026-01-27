@@ -1,64 +1,56 @@
-import React from "react";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
-import api from "../../api";
 
-function AddTruck({ drivers }) {
+function EditTruck({ truck, handleEditTruck }) {
   const [truckNo, setTruckNo] = useState("");
   const [type, setType] = useState("");
-  const [person, setPerson] = useState("");
-  const [maintenanceDate, setMaintenanceDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [driver, setDriver] = useState("");
+  const [lastMaintenance, setLastMaintenance] = useState("");
+  const [nextDue, setNextDue] = useState("");
   const [status, setStatus] = useState("");
 
-  console.log("DDrivers.....", drivers);
+  const { drivers } = useContext(AdminContext);
 
-  //add truck
-  const handleAddTruck = async (e) => {
-    e.preventDefault();
-    console.log(truckNo, type, person, maintenanceDate, dueDate, status);
-
-    try {
-      const res = await api.post("api/trucks/", {
-        truck_no: truckNo,
-        type: type,
-        driver: person,
-        last_maintenance: maintenanceDate || null,
-        next_due: dueDate || null,
-        status: status,
-      });
-      console.log(truckNo, type, person, maintenanceDate, dueDate, status);
-      console.log("Added truck", res.data);
-      toast.success("Truck Added Successfully");
-      setTruckNo("");
-      setPerson("");
-      setStatus("");
-      setType("");
-      setDueDate("");
-      setMaintenanceDate("");
-    } catch (e) {
-      console.log(e);
-      toast.error("Error adding Truck!!");
-    }
+  const handleUpdateTruck = () => {
+    handleEditTruck({
+      id: truck.id,
+      truck_no: truckNo,
+      type,
+      driver,
+      last_maintenance: lastMaintenance,
+      next_due: nextDue,
+      status,
+    });
   };
+  useEffect(() => {
+    if (truck) {
+      setTruckNo(truck.truck_no);
+      setType(truck.type);
+      setDriver(truck.driver);
+      setLastMaintenance(
+        truck.last_maintenance ? truck.last_maintenance.slice(0, 16) : "",
+      );
+      setNextDue(truck.next_due ? truck.next_due.slice(0, 16) : "");
+      setStatus(truck.status);
+    }
+  }, [truck]);
+
   return (
-    <div id="truck-modal" className="modal fade" role="dialog">
+    <div className="modal fade" id="edit-truck-modal" role="dialog">
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5>Add Truck</h5>
+            <h5>Edit Truck</h5>
             <button
               type="button"
-              className="btn-close"
               data-bs-dismiss="modal"
-            ></button>
+              className="btn-close"
+            />
           </div>
           <div className="modal-body">
             <form>
               <div className="mb-3">
-                <label>Vehicle No</label>
+                <label>Truck No</label>
                 <input
                   type="text"
                   className="form-control"
@@ -78,11 +70,11 @@ function AddTruck({ drivers }) {
               <div className="mb-3">
                 <label>Driver</label>
                 <select
-                  className="form-select"
-                  value={person}
-                  onChange={(e) => setPerson(e.target.value)}
+                  className="form-control"
+                  value={driver}
+                  onChange={(e) => setDriver(e.target.value)}
                 >
-                  <option value="">Select Driver</option>
+                  <option value={""}>Select driver</option>
                   {drivers.map((driver) => (
                     <option key={driver.id} value={driver.id}>
                       {driver.name}
@@ -95,8 +87,8 @@ function AddTruck({ drivers }) {
                 <input
                   type="datetime-local"
                   className="form-control"
-                  value={maintenanceDate}
-                  onChange={(e) => setMaintenanceDate(e.target.value)}
+                  value={lastMaintenance}
+                  onChange={(e) => setLastMaintenance(e.target.value)}
                 />
               </div>
               <div className="mb-3">
@@ -104,20 +96,20 @@ function AddTruck({ drivers }) {
                 <input
                   type="datetime-local"
                   className="form-control"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
+                  value={nextDue}
+                  onChange={(e) => setNextDue(e.target.value)}
                 />
               </div>
               <div className="mb-3">
                 <label>Status</label>
                 <select
-                  className="form-select"
+                  className="form-control"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value={""}>Select Status</option>
-                  <option value={"onMaintenance"}>Maintenance</option>
-                  <option value={"isGood"}>Good Condition</option>
+                  <option value={""}>Select status</option>
+                  <option value="isGood">Good Condition</option>
+                  <option value="onMaintenance">On Maintenance</option>
                 </select>
               </div>
             </form>
@@ -133,9 +125,9 @@ function AddTruck({ drivers }) {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={handleAddTruck}
+              onClick={handleUpdateTruck}
             >
-              Save
+              Update
             </button>
           </div>
         </div>
@@ -144,4 +136,4 @@ function AddTruck({ drivers }) {
   );
 }
 
-export default AddTruck;
+export default EditTruck;

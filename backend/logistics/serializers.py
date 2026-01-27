@@ -89,13 +89,16 @@ class TruckSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class JourneySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Journey
-        fields = '__all__'
 
 
 class PartySerializer(serializers.ModelSerializer):
     class Meta:
         model = Party
+        fields = '__all__'
+class JourneySerializer(serializers.ModelSerializer):
+    driver_info = DriverSerializer(source = 'driver', read_only = True)
+    party_info = PartySerializer(source = 'party', read_only = True)
+    truck_info = TruckSerializer(source = 'truck',read_only = True)
+    class Meta:
+        model = Journey
         fields = '__all__'

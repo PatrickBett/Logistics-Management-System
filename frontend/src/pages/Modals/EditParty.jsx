@@ -1,119 +1,124 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-import api from "../../api";
-function AddPartyModal() {
-  const [partyName, setPartyName] = useState("");
-  const [contact, setContact] = useState("");
+import React, { useContext, useEffect, useState } from "react";
+import { AdminContext } from "../../contexts/AdminContext";
+
+function EditParty({ party, handleEditParty }) {
+  const { parties } = useContext(AdminContext);
+
+  const [name, setName] = useState("");
+  const [contactPerson, setContactPerson] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [totalvol, setTotalVol] = useState("");
   const [status, setStatus] = useState("");
+  const [totalVol, setTotalVol] = useState("");
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    console.log({ partyName, contact, phone, email });
-    try {
-      const res = await api.post("api/parties/", {
-        name: partyName,
-        contact_person: contact,
-        phone,
-        email,
-        status,
-        total_vol: totalvol,
-      });
-      toast.success("Party Added Successfully");
-      setPartyName("");
-      setContact("");
-      setPhone("");
-      setEmail("");
-      setTotalVol("");
-      setStatus("");
-    } catch (e) {
-      toast.error("Error Adding Party");
-    }
+  const handleClickEditParty = () => {
+    handleEditParty({
+      id: party.id,
+      name,
+      contact_person: contactPerson,
+      phone,
+      email,
+      status,
+      total_vol: totalVol,
+    });
+    console.log(
+      "Edited info",
+      
+      name,
+      contactPerson,
+      phone,
+      email,
+      status,
+      totalVol,
+    );
   };
+  useEffect(() => {
+    if (party) {
+      setName(party.name);
+      setContactPerson(party.contact_person);
+      setPhone(party.phone);
+      setEmail(party.email);
+      setStatus(party.status);
+      setTotalVol(party.total_vol);
+    }
+  }, [party]);
 
   return (
-    <div
-      className="modal fade"
-      id="party-modal"
-      tabIndex="-1"
-      aria-labelledby="partyModalLabel"
-      aria-hidden="true"
-    >
+    <div className="modal fade" id="edit-party-modal" role="dialog">
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Add Party</h5>
+            <h5>Edit Party</h5>
             <button
               type="button"
-              className="btn-close"
               data-bs-dismiss="modal"
+              className="btn btn-close"
             ></button>
           </div>
-
           <div className="modal-body">
             <form>
               <div className="mb-3">
-                <label className="form-label">Party Name</label>
+                <label>Name</label>
                 <input
-                  type="text"
                   className="form-control"
-                  value={partyName}
-                  onChange={(e) => setPartyName(e.target.value)}
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Contact Person</label>
+                <label>Contact Person</label>
                 <input
-                  type="text"
                   className="form-control"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
+                  value={contactPerson}
+                  onChange={(e) => setContactPerson(e.target.value)}
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Phone</label>
+                <label>Phone</label>
                 <input
-                  type="text"
                   className="form-control"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Email</label>
+                <label>Email</label>
                 <input
-                  type="email"
                   className="form-control"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Total Volume</label>
+                <label>Total Volume</label>
                 <input
-                  type="number"
                   className="form-control"
-                  value={totalvol}
+                  value={totalVol}
                   onChange={(e) => setTotalVol(e.target.value)}
                 />
               </div>
               <div className="mb-3">
                 <label>Status</label>
                 <select
-                  className="form-select"
                   value={status}
+                  className="form-control"
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="">Select Status</option>
-                  <option value="isActive">Active</option>
-                  <option value="isNotActive">Not Active</option>
+                  <option value="" className="form-select">
+                    Select Status
+                  </option>
+                  <option value="isActive" className="form-select">
+                    Active
+                  </option>
+                  <option value="isNotActive" className="form-select">
+                    InActive
+                  </option>
                 </select>
               </div>
             </form>
           </div>
-
           <div className="modal-footer">
             <button
               type="button"
@@ -125,9 +130,9 @@ function AddPartyModal() {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={handleSave}
+              onClick={handleClickEditParty}
             >
-              Save Party
+              Update
             </button>
           </div>
         </div>
@@ -136,4 +141,4 @@ function AddPartyModal() {
   );
 }
 
-export default AddPartyModal;
+export default EditParty;

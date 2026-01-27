@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+from django.utils import timezone
 # Create your models here.
 
 class User(AbstractUser):
@@ -17,7 +18,7 @@ class User(AbstractUser):
         return self.role == 'driver'
     
 class Driver(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL,null=True, blank=True)
 
     ACTION_CHOICES =(
         ('onLeave', 'On Leave'),
@@ -37,6 +38,12 @@ class Driver(models.Model):
 
     def __str__(self):
         return f'{self.name} is {self.status}'
+    def save(self, *args, **kwargs):
+        # Update leave_date automatically when status is changed to 'onLeave'
+        if self.status == 'onLeave':
+            self.leave_date = timezone.now()
+            print("Leave automated")
+        super().save(*args, **kwargs)
 class Party(models.Model):
     ACTION_CHOICES =(
         ('isActive', 'Active'),
@@ -61,9 +68,9 @@ class Truck(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     truck_no = models.CharField(max_length=10, unique=True) 
     type = models.CharField(max_length=20)
-    driver = models.OneToOneField(Driver, on_delete=models.CASCADE, null=True, blank=True)
-    last_maintenance = models.DateTimeField()
-    next_due = models.DateTimeField()
+    driver = models.OneToOneField(Driver, on_delete=models.SET_NULL, null=True, blank=True)
+    last_maintenance = models.DateTimeField(null=True,blank=True)
+    next_due = models.DateTimeField(null=True, blank=True)
     status = models.CharField(choices= ACTION_CHOICES, default='isGood')
     
 
@@ -77,13 +84,21 @@ class Journey(models.Model):
         ('delivered','Delivered'),
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
-    truck = models.ForeignKey(Truck, on_delete=models.CASCADE)
+    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, blank=True, null=True)
+    truck = models.ForeignKey(Truck, on_delete=models.SET_NULL, blank=True, null=True)
     party = models.ForeignKey(Party, on_delete=models.CASCADE)
     startingpoint = models.CharField(max_length=100, default='Nairobi')
     destination = models.CharField(max_length=100, default='Nairobi')
+    cost = models.PositiveBigIntegerField(default=0)
+    description = models.TextField(default='goods')
     status = models.CharField(choices = ACTION_CHOICES)
 
     def __str__(self):
         return self.party.name
+    def save(self, *args, **kwargs):
+        # Ensure driver only uses their own truck
+        if self.driver and self.truck:
+            if self.truck.driver != self.driver:
+                raise ValueError("Driver can only be assigned to their own truck.")
+        super().save(*args, **kwargs)
 

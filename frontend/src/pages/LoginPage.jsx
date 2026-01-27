@@ -5,8 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import { FaTruck } from "react-icons/fa";
+import { useContext } from "react";
+import { AdminContext } from "../contexts/AdminContext";
 
 function LoginPage() {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AdminContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -30,14 +33,18 @@ function LoginPage() {
       console.log(decoded);
       const role = decoded.role;
       localStorage.setItem("role", role);
+      setIsAuthenticated(true);
 
       // 🧭 Role-based navigation
       if (role === "admin") {
         navigate("/admin/dashboard");
+        // window.location.reload();
       } else if (role === "manager") {
         navigate("/manager-dashboard");
+        // window.location.reload();
       } else {
         navigate("/user/dashboard");
+        // window.location.reload();
       }
       toast.success("Logged In Successfully");
     } catch (err) {

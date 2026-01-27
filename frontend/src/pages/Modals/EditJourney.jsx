@@ -1,57 +1,51 @@
-import React from "react";
-import api from "../../api";
-import { useState, useContext } from "react";
-import { toast } from "react-toastify";
+import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
 
-function AddJourney() {
-  const { drivers, trucks, parties } = useContext(AdminContext);
+function EditJourney({ handleEditJourney, journey }) {
+  const { trucks, parties, drivers } = useContext(AdminContext);
   const [driver, setDriver] = useState("");
   const [truck, setTruck] = useState("");
   const [party, setParty] = useState("");
-  const [startingpoint, setStartingPoint] = useState("");
+  const [startingPoint, setStartingPoint] = useState("");
   const [destination, setDestination] = useState("");
-  const [cost, setCost] = useState(0);
+  const [cost, setCost] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
 
-  const addJourney = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await api.post("api/journeys/", {
-        driver,
-        truck,
-        party,
-        startingpoint,
-        destination,
-        cost,
-        description,
-        status,
-      });
-      console.log(res.data);
-      toast.success("Journey Added Successfull");
-      (setDriver(""),
-        setTruck(""),
-        setParty(""),
-        setStartingPoint(""),
-        setDestination(""),
-        setCost(0),
-        setDescription(""),
-        setStatus(""));
-    } catch (e) {
-      toast.error("Error Adding Journey");
-      console.log(e);
-    }
+  const handleClickEditJourney = () => {
+    handleEditJourney({
+      id: journey.id,
+      driver,
+      truck,
+      party,
+      startingpoint: startingPoint,
+      destination,
+      cost,
+      description,
+      status,
+    });
   };
+  useEffect(() => {
+    if (journey) {
+      setDriver(journey.driver);
+      setTruck(journey.truck);
+      setParty(journey.party);
+      setStartingPoint(journey.startingpoint);
+      setDestination(journey.destination);
+      setCost(journey.cost);
+      setDescription(journey.description);
+      setStatus(journey.status);
+    }
+  }, [journey]);
   return (
-    <div id="journey-modal" className="modal fade" role="dialog">
+    <div className="modal fade" role="dialog" id="edit-journey-modal">
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5>Add Journey</h5>
+            <h5>Edit Journey</h5>
             <button
               type="button"
-              className="btn-close"
+              className="btn btn-close"
               data-bs-dismiss="modal"
             ></button>
           </div>
@@ -60,60 +54,54 @@ function AddJourney() {
               <div className="mb-3">
                 <label>Driver</label>
                 <select
-                  className="form-select"
+                  className="form-control"
                   value={driver}
                   onChange={(e) => setDriver(e.target.value)}
                 >
                   <option value="">Select Driver</option>
-                  {drivers.length > 0
-                    ? drivers.map((driver) => (
-                        <option key={driver.id} value={driver.id}>
-                          {driver.name}
-                        </option>
-                      ))
-                    : ""}
+                  {drivers.map((driver) => (
+                    <option key={driver.id} value={driver.id}>
+                      {driver.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="mb-3">
                 <label>Truck</label>
                 <select
-                  className="form-select"
+                  className="form-control"
                   value={truck}
                   onChange={(e) => setTruck(e.target.value)}
                 >
                   <option value="">Select Truck</option>
-                  {trucks.length > 0
-                    ? trucks.map((truck) => (
-                        <option key={truck.id} value={truck.id}>
-                          {truck.truck_no}
-                        </option>
-                      ))
-                    : ""}
+                  {trucks.map((truck) => (
+                    <option key={truck.id} value={truck.id}>
+                      {truck.truck_no}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="mb-3">
                 <label>Party</label>
                 <select
-                  className="form-select"
+                  className="form-control"
                   value={party}
                   onChange={(e) => setParty(e.target.value)}
                 >
                   <option value="">Select Party</option>
-                  {parties.length > 0
-                    ? parties.map((party) => (
-                        <option key={party.id} value={party.id}>
-                          {party.name}
-                        </option>
-                      ))
-                    : ""}
+                  {parties.map((party) => (
+                    <option key={party.id} value={party.id}>
+                      {party.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="mb-3">
-                <label>Starting point</label>
+                <label>Starting Point</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={startingpoint}
+                  value={startingPoint}
                   onChange={(e) => setStartingPoint(e.target.value)}
                 />
               </div>
@@ -130,9 +118,9 @@ function AddJourney() {
                 <label>Cost</label>
                 <input
                   type="number"
-                  className="form-control"
                   value={cost}
-                  onChange={(e) => setCost(Number(e.target.value))}
+                  className="form-control"
+                  onChange={(e) => setCost(e.target.value)}
                 />
               </div>
               <div className="mb-3">
@@ -147,13 +135,13 @@ function AddJourney() {
               <div className="mb-3">
                 <label>Status</label>
                 <select
-                  className="form-select"
-                  value={status}
+                  className="form-control"
                   onChange={(e) => setStatus(e.target.value)}
+                  value={status}
                 >
                   <option value="">Select Status</option>
                   <option value="cancelled">Cancelled</option>
-                  <option value="inprogress">InProgress</option>
+                  <option value="inprogress">In Progress</option>
                   <option value="shipping">Shipping</option>
                   <option value="delivered">Delivered</option>
                 </select>
@@ -171,9 +159,9 @@ function AddJourney() {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={addJourney}
+              onClick={handleClickEditJourney}
             >
-              Save
+              Update
             </button>
           </div>
         </div>
@@ -182,4 +170,4 @@ function AddJourney() {
   );
 }
 
-export default AddJourney;
+export default EditJourney;

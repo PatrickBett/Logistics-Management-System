@@ -10,9 +10,11 @@ function UserDashboardLayout() {
     try {
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
-      localStorage.removeItem("user");
+      localStorage.removeItem("role");
       toast.success("Loggedout success");
+
       navigate("/");
+      window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -23,8 +25,8 @@ function UserDashboardLayout() {
       <div className="d-flex vh-100">
         {/* Sidebar */}
         <div
-          className="border-end d-flex flex-column ps-5 pt-3 bg-dark"
-          style={{ width: "260px", minWidth: "260px" }}
+          className="border-end d-flex flex-column ps-2 pt-3 bg-dark"
+          style={{ width: "230px", minWidth: "230px" }}
         >
           <h3 style={{ color: "white" }}>Driver Panel</h3>
           <Link to="/user/dashboard" className="p-3 text-decoration-none">

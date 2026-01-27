@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaBell } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
 
 function Header({ onToggleSidebar, sidebarOpen }) {
@@ -13,7 +13,8 @@ function Header({ onToggleSidebar, sidebarOpen }) {
           {sidebarOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
-      <div className="col text-end" onClick={()=>alert("Profile")}>
+
+      <div className="col text-end" onClick={() => alert("Profile")}>
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/250px-Outdoors-man-portrait_%28cropped%29.jpg"
           style={{ width: "40px", height: "40px", borderRadius: "50%" }}

@@ -1,14 +1,68 @@
 import { createContext, useState, useEffect } from "react";
 import api from "../api";
 import { toast } from "react-toastify";
+import EditParty from "../pages/Modals/EditParty";
 export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [drivers, setDrivers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditingDriver, setEditingDriver] = useState(null);
-
+  const [isEditingTruck, setEditingTruck] = useState(null);
+  const [isEditingParty, setEditingParty] = useState(null);
+  const [isEditingJourney, setEditingJourney] = useState(null);
+  const [parties, setParties] = useState([]);
   const [trucks, setTrucks] = useState([]);
+  const [journeys, setJourneys] = useState([]);
+  //fetch parties
+  const fetchParties = async () => {
+    try {
+      const res = await api.get("api/parties/");
+      setParties(res.data);
+      console.log("Parties", res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  // useEffect(() => {
+  //   fetchParties();
+  // }, []);
+  //delete journey
+  const handleDeleteJourney = async (id) => {
+    try {
+      const res = await api.delete(`api/journeys/${id}/`);
+      setJourneys((prev) => prev.filter((j) => j.id !== id));
+      toast.success("Driver Deleted Successfully");
+    } catch (e) {
+      console.log(e);
+      toast.error("Error Deleting Driver");
+    }
+  };
+  // delete party
+  const handleDeleteParty = async (id) => {
+    try {
+      const res = await api.delete(`api/parties/${id}/`);
+      setParties((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Party Deleted successfully");
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  //fetch Journeys
+  const fetchJourneys = async () => {
+    try {
+      const res = await api.get("api/journeys/");
+      setJourneys(res.data);
+      console.log("Journies", res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  // useEffect(() => {
+  //   fetchJourneys();
+  // }, []);
 
   // fetch trucks
   const fetchTrucks = async () => {
@@ -23,9 +77,9 @@ export const AdminProvider = ({ children }) => {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    fetchTrucks();
-  }, []);
+  // useEffect(() => {
+  //   fetchTrucks();
+  // }, []);
   //fetch Drivers
 
   const fetchDrivers = async () => {
@@ -39,9 +93,9 @@ export const AdminProvider = ({ children }) => {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    fetchDrivers();
-  }, []);
+  // useEffect(() => {
+  //   fetchDrivers();
+  // }, []);
   //editDriver
   const handleEdit = async (updatedDriverData) => {
     setIsLoading(true);
@@ -69,22 +123,88 @@ export const AdminProvider = ({ children }) => {
   const handleAddDriver = (newDriver) => {
     setDrivers((prev) => [...prev, newDriver]); // ✅ spread
   };
+  //deleting driver
 
   const handleDelete = async (id) => {
     setIsLoading(true);
     try {
       const res = await api.delete(`api/drivers/${id}/`);
       setDrivers((prev) => prev.filter((d) => d.id !== id));
-      toast.error("Deleted successfully");
+      toast.success("Deleted successfully");
     } catch (e) {
       console.log(e);
+      toast.error("Error deleting party");
     } finally {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDrivers();
+      fetchTrucks();
+      fetchJourneys();
+      fetchParties();
+    }
+  }, [isAuthenticated]);
+
+  //Edit Truck
+  const handleEditTruck = async (updatedtruckdata) => {
+    try {
+      const res = await api.put(
+        `api/trucks/${updatedtruckdata.id}/`,
+        updatedtruckdata,
+      );
+      const updatedtruck = res.data;
+      // Update trucks state
+      setTrucks((prev) =>
+        prev.map((t) => (t.id === updatedtruck.id ? updatedtruck : t)),
+      );
+      toast.success("Editing Successfull");
+    } catch (e) {
+      console.log(e);
+      toast.error("Error Editing Truck");
+    }
+  };
+
+  // Edit Party
+  const handleEditParty = async (updatedpartydata) => {
+    try {
+      const res = await api.put(
+        `api/parties/${updatedpartydata.id}/`,
+        updatedpartydata,
+      );
+      const updatedparty = res.data;
+      setParties((prev) =>
+        prev.map((p) => (p.id === updatedparty.id ? updatedparty : p)),
+      );
+      toast.success("Editing Successfull");
+    } catch (e) {
+      console.log(e);
+      toast.error("Error Editing Party");
+    }
+  };
+  // edit journey
+  const handleEditJourney = async (updatedJourneyData) => {
+    try {
+      const res = await api.put(
+        `api/journeys/${updatedJourneyData.id}/`,
+        updatedJourneyData,
+      );
+      const updatedJourney = res.data;
+      setJourneys((prev) =>
+        prev.map((j) => (j.id === updatedJourney.id ? updatedJourney : j)),
+      );
+      toast.success("Editing Successfull");
+    } catch (e) {
+      toast.error("Error Editing Journey");
+    }
+  };
+
   return (
     <AdminContext.Provider
       value={{
+        isAuthenticated,
+        setIsAuthenticated,
         drivers,
         isLoading,
         setIsLoading,
@@ -98,6 +218,21 @@ export const AdminProvider = ({ children }) => {
         trucks,
         setTrucks,
         fetchTrucks,
+        journeys,
+        setJourneys,
+        parties,
+        setParties,
+        handleDeleteParty,
+        handleDeleteJourney,
+        isEditingTruck,
+        setEditingTruck,
+        handleEditTruck,
+        isEditingParty,
+        setEditingParty,
+        handleEditParty,
+        isEditingJourney,
+        setEditingJourney,
+        handleEditJourney,
       }}
     >
       {children}

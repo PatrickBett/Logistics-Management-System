@@ -9,9 +9,10 @@ import {
   FaUsers,
   FaRoute,
 } from "react-icons/fa";
+import TripsChart from "../../charts/TripsChart";
 
 function Dashboard() {
-  const { drivers, trucks } = useContext(AdminContext);
+  const { drivers, trucks, journeys, parties } = useContext(AdminContext);
   console.log("Dashboard Drivers", drivers);
   return (
     <div className="container-fluid">
@@ -43,7 +44,7 @@ function Dashboard() {
             <h5>
               <FaUsers className="me-2" /> Total Parties
             </h5>
-            <p className="fw-bold fs-4">4</p>
+            <p className="fw-bold fs-4">{parties.length}</p>
           </div>
         </div>
         <div className="col-12 col-sm-6 col-md-3">
@@ -52,7 +53,7 @@ function Dashboard() {
               <FaRoute className="me-2" />
               Total Journeys
             </h5>
-            <p className="fw-bold fs-4">320</p>
+            <p className="fw-bold fs-4">{journeys.length}</p>
           </div>
         </div>
       </div>
@@ -72,7 +73,7 @@ function Dashboard() {
             </thead>
             <tbody>
               {drivers.filter((driver) => driver.status === "onLeave").length >
-              1 ? (
+              0 ? (
                 drivers
                   .filter((driver) => driver.status === "onLeave")
                   .map((driver) => (
@@ -80,8 +81,8 @@ function Dashboard() {
                       <td>{driver.name}</td>
                       <td>{driver.license_no}</td>
                       <td>{driver.phone}</td>
-                      <td>{driver.leave_date}</td>
-                      <td>{driver.return_date}</td>
+                      <td>{driver.leave_date ?driver.leave_date.slice(0, 16):''}</td>
+                      <td>{driver.return_date ? driver.return_date.slice(0, 16):''}</td>
                     </tr>
                   ))
               ) : (
@@ -95,23 +96,8 @@ function Dashboard() {
           </table>
         </div>
         <div className="col-sm-6">
-          <h5>Unavailable Drivers</h5>
-          <table className="table table-bordered g-3">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>License No</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>James Kariuki</td>
-                <td>DL234</td>
-                <td>On Leave</td>
-              </tr>
-            </tbody>
-          </table>
+          <h5>Trips By Drivers</h5>
+          <TripsChart className="mt-5 pt-5" />
         </div>
       </div>
     </div>

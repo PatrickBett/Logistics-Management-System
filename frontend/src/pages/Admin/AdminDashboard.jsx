@@ -42,7 +42,7 @@ function AdminDashboard() {
           className={`border-end d-flex flex-column ps-3 pt-3 bg-dark ${
             sidebarOpen ? "d-block" : "d-none"
           } d-md-flex`} // d-md-flex ensures sidebar is always visible on md+ screens
-          style={{ width: "260px", minWidth: "260px" }}
+          style={{ width: "230px", minWidth: "230px" }}
         >
           <h3 style={{ color: "white" }}>Admin Panel</h3>
 
@@ -81,7 +81,7 @@ function AdminDashboard() {
         {/* Main content */}
         <div
           className="flex-grow-1 p-4"
-          style={{ width: "calc(100vw - 260px)" }}
+          style={{ width: "calc(100vw - 230px)" }}
         >
           <Outlet />
         </div>
