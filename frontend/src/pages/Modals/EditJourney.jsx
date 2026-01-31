@@ -9,12 +9,12 @@ function EditJourney({ handleEditJourney, journey }) {
   const [party, setParty] = useState("");
   const [startingPoint, setStartingPoint] = useState("");
   const [destination, setDestination] = useState("");
-  const [cost, setCost] = useState("");
+  const [weight, setWeight] = useState(0);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
 
   const handleClickEditJourney = () => {
-    try{
+    try {
       handleEditJourney({
         id: journey.id,
         driver,
@@ -22,12 +22,11 @@ function EditJourney({ handleEditJourney, journey }) {
         party,
         startingpoint: startingPoint,
         destination,
-        cost,
+        weight,
         description,
         status,
       });
-
-    }catch(err){
+    } catch (err) {
       console.error("Error updating journey:", err);
     }
   };
@@ -38,7 +37,7 @@ function EditJourney({ handleEditJourney, journey }) {
       setParty(journey.party);
       setStartingPoint(journey.startingpoint);
       setDestination(journey.destination);
-      setCost(journey.cost);
+      setWeight(journey.weight);
       setDescription(journey.description);
       setStatus(journey.status);
     }
@@ -121,12 +120,12 @@ function EditJourney({ handleEditJourney, journey }) {
                 />
               </div>
               <div className="mb-3">
-                <label>Cost</label>
+                <label>Weight</label>
                 <input
                   type="number"
-                  value={cost}
+                  value={weight}
                   className="form-control"
-                  onChange={(e) => setCost(e.target.value)}
+                  onChange={(e) => setWeight(Number(e.target.value))}
                 />
               </div>
               <div className="mb-3">

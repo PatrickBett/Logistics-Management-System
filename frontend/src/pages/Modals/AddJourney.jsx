@@ -5,32 +5,44 @@ import { toast } from "react-toastify";
 import { AdminContext } from "../../contexts/AdminContext";
 
 function AddJourney() {
-  const { drivers, trucks, parties, setJourneys } = useContext(AdminContext);
+  const { drivers, trucks, parties, setJourneys, fetchDrivers } =
+    useContext(AdminContext);
   const [driver, setDriver] = useState("");
   const [truck, setTruck] = useState("");
   const [party, setParty] = useState("");
   const [startingpoint, setStartingPoint] = useState("");
   const [destination, setDestination] = useState("");
-  const [cost, setCost] = useState(0);
+  const [weight, setWeight] = useState(0);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
 
   const addJourney = async (e) => {
     e.preventDefault();
+    console.log("Adding Journey with data:", {
+      driver,
+      truck,
+      party,
+      startingpoint,
+      destination,
+      weight,
+      description,
+      status,
+    });
     try {
       const res = await api.post("api/journeys/", {
         driver,
-        truck,
+        truck: truck.id,
         party,
         startingpoint,
         destination,
-        cost,
+        weight,
         description,
         status,
       });
       console.log(res.data);
       const newJourney = res.data;
       setJourneys((prev) => [newJourney, ...prev]); // Add new journey to the list
+      fetchDrivers(); // Refresh drivers to update their trip counts
 
       toast.success("Journey Added Successfull");
       (setDriver(""),
@@ -38,7 +50,7 @@ function AddJourney() {
         setParty(""),
         setStartingPoint(""),
         setDestination(""),
-        setCost(0),
+        setWeight(0),
         setDescription(""),
         setStatus(""));
     } catch (e) {
@@ -65,7 +77,22 @@ function AddJourney() {
                 <select
                   className="form-select"
                   value={driver}
-                  onChange={(e) => setDriver(e.target.value)}
+                  onChange={(e) => {
+                    setDriver(e.target.value);
+                    console.log("Selected Driver ID:", e.target.value);
+
+                    const selectedTruck = trucks.find(
+                      (truck) => truck.driver === e.target.value,
+                    );
+
+                    if (selectedTruck) {
+                      setTruck(selectedTruck);
+                      console.log("Associated Truck:", selectedTruck);
+                    } else {
+                      // No truck assigned to this driver
+                      setTruck("");
+                    }
+                  }}
                 >
                   <option value="">Select Driver</option>
                   {drivers.length > 0
@@ -79,7 +106,8 @@ function AddJourney() {
               </div>
               <div className="mb-3">
                 <label>Truck</label>
-                <select
+                <input value={truck.truck_no} className="form-control" />
+                {/* <select
                   className="form-select"
                   value={truck}
                   onChange={(e) => setTruck(e.target.value)}
@@ -92,7 +120,7 @@ function AddJourney() {
                         </option>
                       ))
                     : ""}
-                </select>
+                </select> */}
               </div>
               <div className="mb-3">
                 <label>Party</label>
@@ -130,12 +158,12 @@ function AddJourney() {
                 />
               </div>
               <div className="mb-3">
-                <label>Cost</label>
+                <label>Weight</label>
                 <input
                   type="number"
                   className="form-control"
-                  value={cost}
-                  onChange={(e) => setCost(Number(e.target.value))}
+                  value={weight}
+                  onChange={(e) => setWeight(Number(e.target.value))}
                 />
               </div>
               <div className="mb-3">

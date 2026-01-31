@@ -10,6 +10,7 @@ function Journeys() {
 
   const {
     journeys,
+    trucks,
     handleDeleteJourney,
     isEditingJourney,
     setEditingJourney,
@@ -17,6 +18,7 @@ function Journeys() {
   } = useContext(AdminContext);
 
   const [searchQuery, setSearchQuery] = useState("");
+  console.log("Trucks in Journeys Component:", trucks);
 
   // 🔍 SEARCH LOGIC (SAFE + OPTIMIZED)
   const filteredJourneys = useMemo(() => {
@@ -78,7 +80,7 @@ function Journeys() {
                 <th>Party</th>
                 <th>Starting Point</th>
                 <th>Destination</th>
-                {role === "admin" && <th>Cost</th>}
+                <th>Transported Weight</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -93,8 +95,20 @@ function Journeys() {
                     <td>{journey.party_info?.name || "-"}</td>
                     <td>{journey.startingpoint}</td>
                     <td>{journey.destination}</td>
-                    {role === "admin" && <td>{journey.cost} KES</td>}
-                    <td>{journey.status}</td>
+                    <td className="text-center">{journey.weight} KGs</td>
+                    <td
+                      className={
+                        journey.status === "delivered"
+                          ? "bg-success text-white"
+                          : journey.status === "cancelled"
+                            ? "bg-danger text-white"
+                            : journey.status === "inprogress"
+                              ? "bg-warning text-dark"
+                              : "bg-info text-white"
+                      }
+                    >
+                      {journey.status}
+                    </td>
 
                     <td className="d-flex gap-2">
                       <button

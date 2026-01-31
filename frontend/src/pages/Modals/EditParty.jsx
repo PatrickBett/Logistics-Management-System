@@ -10,6 +10,7 @@ function EditParty({ party, handleEditParty }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const [totalVol, setTotalVol] = useState("");
+  const [price, setPrice] = useState("");
 
   const handleClickEditParty = () => {
     handleEditParty({
@@ -20,6 +21,7 @@ function EditParty({ party, handleEditParty }) {
       email,
       status,
       total_vol: totalVol,
+      price,
     });
     console.log(
       "Edited info",
@@ -29,6 +31,7 @@ function EditParty({ party, handleEditParty }) {
       phone,
       email,
       status,
+      price,
       totalVol,
     );
   };
@@ -40,6 +43,7 @@ function EditParty({ party, handleEditParty }) {
       setEmail(party.email);
       setStatus(party.status);
       setTotalVol(party.total_vol);
+      setPrice(party.price);
     }
   }, [party]);
 
@@ -97,6 +101,14 @@ function EditParty({ party, handleEditParty }) {
                   className="form-control"
                   value={totalVol}
                   onChange={(e) => setTotalVol(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <label>Price</label>
+                <input
+                  className="form-control"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
               <div className="mb-3">

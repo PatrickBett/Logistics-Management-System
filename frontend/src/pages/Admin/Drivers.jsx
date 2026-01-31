@@ -117,7 +117,7 @@ function Drivers() {
                             : "text-info"
                       }
                     >
-                      {driver.status}
+                      {driver.status === "onLeave" ? "Leave" : driver.status === "onDuty" ? "On Duty" : "Available"}
                     </td>
 
                     <td className="d-flex align-items-center gap-2">

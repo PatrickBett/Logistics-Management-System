@@ -10,6 +10,7 @@ function AddPartyModal() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [totalvol, setTotalVol] = useState("");
+  const [price, setPrice] = useState("");
   const [status, setStatus] = useState("");
 
   const handleSave = async (e) => {
@@ -23,6 +24,7 @@ function AddPartyModal() {
         email,
         status,
         total_vol: totalvol,
+        price,
       });
 
       const newParty = res.data;
@@ -34,6 +36,7 @@ function AddPartyModal() {
       setPhone("");
       setEmail("");
       setTotalVol("");
+      setPrice("");
       setStatus("");
     } catch (e) {
       toast.error("Error Adding Party");
@@ -104,6 +107,15 @@ function AddPartyModal() {
                   className="form-control"
                   value={totalvol}
                   onChange={(e) => setTotalVol(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Price</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
               <div className="mb-3">

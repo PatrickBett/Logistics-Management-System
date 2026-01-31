@@ -45,7 +45,7 @@ function UserDashboardLayout() {
           } d-md-flex`} // d-md-flex ensures sidebar is always visible on md+ screens
           style={{ width: "230px", minWidth: "230px" }}
         >
-          <h3 style={{ color: "white" }}>Admin Panel</h3>
+          <h3 style={{ color: "white" }}>User Panel</h3>
 
           <NavLink
             to="/user/dashboard"

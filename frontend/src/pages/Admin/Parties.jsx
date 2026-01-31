@@ -59,12 +59,13 @@ function Parties() {
         <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
-              <tr>
+              <tr className="text-center">
                 <th>Name</th>
                 <th>Contact Person</th>
                 <th>Phone</th>
                 <th>Email</th>
-                <th>Total Volume</th>
+                <th>Weight to be transported</th>
+                <th>Total Price</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -77,7 +78,8 @@ function Parties() {
                     <td>{party.contact_person}</td>
                     <td>{party.phone}</td>
                     <td>{party.email}</td>
-                    <td>{party.total_vol} Kgs</td>
+                    <td className="text-center">{party.total_vol} Kgs</td>
+                    <td className="text-center">{party.price} KES</td>
                     <td>{party.status}</td>
                     <td className="d-flex align-items-center gap-2">
                       <button

@@ -41,12 +41,12 @@ class Driver(models.Model):
 
     def __str__(self):
         return f'{self.name} is {self.status}'
+
     def save(self, *args, **kwargs):
         # Update leave_date automatically when status is changed to 'onLeave'
         if self.status == 'onLeave' and not self.leave_date:
             self.leave_date = timezone.now()
             self.return_date = self.leave_date + timedelta(days=4)
-
             print("Leave automated")
         super().save(*args, **kwargs)
 class Party(models.Model):
@@ -61,6 +61,7 @@ class Party(models.Model):
     email = models.CharField(max_length=60)
     status = models.CharField(choices=ACTION_CHOICES, default='isActive')
     total_vol = models.IntegerField()
+    price = models.IntegerField( default=0)
 
     def __str__(self):
         return self.name
@@ -94,39 +95,52 @@ class Journey(models.Model):
     party = models.ForeignKey(Party, on_delete=models.CASCADE)
     startingpoint = models.CharField(max_length=100, default='Nairobi')
     destination = models.CharField(max_length=100, default='Nairobi')
-    cost = models.PositiveBigIntegerField(default=0)
+    weight = models.IntegerField(default=0)
     description = models.TextField(default='goods')
     status = models.CharField(choices = ACTION_CHOICES)
 
     def __str__(self):
         return self.party.name
     
-    def check_journey_status(self, old_status = None):
+    def check_status(self, old_status):
         if not self.driver:
-            return
+            return self.status
 
-        if old_status != 'delivered' and self.status == 'delivered':
+
+        if old_status not in ["inprogress", "shipping"] and self.status == 'inprogress':
+            self.driver.incomplete_trips += 1
+        elif old_status not in ["inprogress", "shipping"] and self.status == 'shipping':
+            self.driver.incomplete_trips += 1
+            
+        elif old_status != 'delivered' and self.status == 'delivered':
+            if self.driver.incomplete_trips > 0:
+                self.driver.incomplete_trips -= 1
             self.driver.complete_trips += 1
+        elif old_status == 'delivered' and self.status in ["inprogress", "shipping"]:
+            if self.driver.complete_trips > 0:
+                self.driver.complete_trips -= 1
+            self.driver.incomplete_trips += 1
+        elif old_status != 'cancelled' and self.status == 'cancelled':
             if self.driver.incomplete_trips > 0:
                 self.driver.incomplete_trips -= 1
 
-        elif (old_status != 'inprogress' and self.status == 'inprogress'):
-            self.driver.complete_trips += 1
-            if self.driver.incomplete_trips > 0:
-                self.driver.incomplete_trips -= 1
-        elif (old_status != 'shipping' and self.status == 'shipping'):
-            self.driver.complete_trips += 1
-            if self.driver.incomplete_trips > 0:
-                self.driver.incomplete_trips -= 1
         self.driver.save()
+        return self.status
+
 
     def save(self, *args, **kwargs):
         # Ensure driver only uses their own truck
         if self.driver and self.truck:
             if self.truck.driver != self.driver:
                 raise ValueError("Driver can only be assigned to their own truck.")
-        self.check_journey_status(old_status=None)
-        print("Journey status checked and driver trips updated.")
+        # Get old status if the object exists
+        old_status = None
+        # existing journey
+        
+        if self.pk and Journey.objects.filter(pk=self.pk).exists():
+            old_status = Journey.objects.get(pk=self.pk).status
+              
         super().save(*args, **kwargs)
+        self.check_status(old_status)  
        
 

@@ -192,6 +192,7 @@ export const AdminProvider = ({ children }) => {
         updatedJourneyData,
       );
       const updatedJourney = res.data;
+      fetchDrivers(); // Refresh drivers to update their trip counts
       console.log("Updated Journey:", updatedJourney);
       setJourneys((prev) =>
         prev.map((j) => (j.id === updatedJourney.id ? updatedJourney : j)),
@@ -199,7 +200,7 @@ export const AdminProvider = ({ children }) => {
       toast.success("Editing Successfull");
     } catch (e) {
       toast.error("Error Editing Journey");
-      console.log("This is error",e)
+      console.log("This is error", e);
     }
   };
   useEffect(() => {
