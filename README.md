@@ -1,9 +1,10 @@
 # Logistics Management System.
 
-## Admin Dashboard
+## Dashboard
 
-This project is a logistics management dashboard built with React and Django.
+This project is a role based access logistics management system built with React and Django.
 It allows administrators to monitor drivers, trucks, journeys, and parties in one place.
+Drivers can register on the site only after added by the admin as one of the company's drivers.
 
 ## Features
 
@@ -18,9 +19,9 @@ It allows administrators to monitor drivers, trucks, journeys, and parties in on
 
 ## Tech Stack
 
-Frontend: React, Bootstrap, CSS, Rechart, Context API
+1. Frontend: React, Bootstrap, CSS, Rechart, Context API
 
-Backend: Django, Django REST Framework
+2. Backend: Django, Django REST Framework
 
 This dashboard is intended for internal administrative use.
 ![alt text](image-2.png)
