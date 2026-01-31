@@ -18,7 +18,7 @@ It allows administrators to monitor drivers, trucks, journeys, and parties in on
 
 ## Tech Stack
 
-Frontend: React, Bootstrap, CSS, Rechart
+Frontend: React, Bootstrap, CSS, Rechart, Context API
 
 Backend: Django, Django REST Framework
 
