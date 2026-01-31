@@ -6,6 +6,7 @@ import { AdminContext } from "../../contexts/AdminContext";
 import api from "../../api";
 
 function AddTruck({ drivers }) {
+  const {setTrucks}=useContext(AdminContext)
   const [truckNo, setTruckNo] = useState("");
   const [type, setType] = useState("");
   const [person, setPerson] = useState("");
@@ -18,7 +19,6 @@ function AddTruck({ drivers }) {
   //add truck
   const handleAddTruck = async (e) => {
     e.preventDefault();
-    console.log(truckNo, type, person, maintenanceDate, dueDate, status);
 
     try {
       const res = await api.post("api/trucks/", {
@@ -29,8 +29,8 @@ function AddTruck({ drivers }) {
         next_due: dueDate || null,
         status: status,
       });
-      console.log(truckNo, type, person, maintenanceDate, dueDate, status);
-      console.log("Added truck", res.data);
+      const newTruck = res.data
+      setTrucks((prev)=>[ ...prev, newTruck])
       toast.success("Truck Added Successfully");
       setTruckNo("");
       setPerson("");

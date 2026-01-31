@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
 
 function EditJourney({ handleEditJourney, journey }) {
+  console.log("Journey prop in EditJourney:", journey);
   const { trucks, parties, drivers } = useContext(AdminContext);
   const [driver, setDriver] = useState("");
   const [truck, setTruck] = useState("");
@@ -13,17 +14,22 @@ function EditJourney({ handleEditJourney, journey }) {
   const [status, setStatus] = useState("");
 
   const handleClickEditJourney = () => {
-    handleEditJourney({
-      id: journey.id,
-      driver,
-      truck,
-      party,
-      startingpoint: startingPoint,
-      destination,
-      cost,
-      description,
-      status,
-    });
+    try{
+      handleEditJourney({
+        id: journey.id,
+        driver,
+        truck,
+        party,
+        startingpoint: startingPoint,
+        destination,
+        cost,
+        description,
+        status,
+      });
+
+    }catch(err){
+      console.error("Error updating journey:", err);
+    }
   };
   useEffect(() => {
     if (journey) {

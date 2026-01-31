@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Admin/Header";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
   FaTruck,
   FaUser,
@@ -46,22 +47,31 @@ function UserDashboardLayout() {
         >
           <h3 style={{ color: "white" }}>Admin Panel</h3>
 
-          <Link to="/user/dashboard" className="p-3 text-decoration-none">
+          <NavLink
+            to="/user/dashboard"
+            className="p-3 text-decoration-none sidebar-link"
+          >
             <FaTachometerAlt className="me-2" />
             Dashboard
-          </Link>
+          </NavLink>
 
-          <Link to="/user/trucks" className="p-3 text-decoration-none">
+          <NavLink
+            to="/user/trucks"
+            className="p-3 text-decoration-none sidebar-link"
+          >
             <FaTruck className="me-2" />
             Trucks
-          </Link>
+          </NavLink>
 
-          <Link to="/user/journeys" className="p-3 text-decoration-none">
+          <NavLink
+            to="/user/journeys"
+            className="p-3 text-decoration-none sidebar-link"
+          >
             <FaRoute className="me-2" /> Journeys
-          </Link>
+          </NavLink>
 
           <span
-            className="p-3 text-danger"
+            className="p-3 text-danger sidebar-link"
             style={{ cursor: "pointer" }}
             onClick={handleLogout}
           >

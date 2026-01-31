@@ -8,6 +8,7 @@ function AddDriver({ handleAddDriver }) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [trips, setTrips] = useState(0);
+  const [incomplete_trips, setIncompleteTrips] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async (e) => {
@@ -18,7 +19,8 @@ function AddDriver({ handleAddDriver }) {
         name: name,
         phone: phone,
         email: email,
-        trips: trips,
+        complete_trips: trips,
+        incomplete_trips: incomplete_trips,
       });
       const newDriver = response.data;
       handleAddDriver(newDriver);
@@ -30,6 +32,7 @@ function AddDriver({ handleAddDriver }) {
       setPhone("");
       setEmail("");
       setTrips(0);
+      setIncompleteTrips(0);
     } catch (e) {
       console.log(e);
     } finally {
@@ -85,6 +88,15 @@ function AddDriver({ handleAddDriver }) {
                   className="form-control"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Incomplete Trips</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={incomplete_trips}
+                  onChange={(e) => setIncompleteTrips(e.target.value)}
                 />
               </div>
               <div className="mb-3">

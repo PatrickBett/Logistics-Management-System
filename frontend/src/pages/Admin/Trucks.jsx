@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FaPlus } from "react-icons/fa";
 import AddTruck from "../Modals/AddTruck";
 import EditTruck from "../Modals/EditTruck";
@@ -9,11 +9,30 @@ import { MdModeEdit, MdDelete } from "react-icons/md";
 import { IoMdArrowDropdown } from "react-icons/io";
 
 function Trucks() {
-  const { drivers, isLoading, setIsLoading, fetchTrucks, trucks, setTrucks, isEditingTruck, setEditingTruck, handleEditTruck } =
-    useContext(AdminContext);
-  console.log("Trucks", trucks);
+  const {
+    drivers,
+    isLoading,
+    setIsLoading,
+    fetchTrucks,
+    trucks,
+    setTrucks,
+    isEditingTruck,
+    setEditingTruck,
+    handleEditTruck,
+  } = useContext(AdminContext);
+  const [searchQuery, setSearchQuery] = useState("");
   const role = localStorage.getItem("role");
 
+  const filterTrucks = useMemo(() => {
+    return trucks.filter(
+      (truck) =>
+        truck.truck_no?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        truck.type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        truck.driver_info?.name
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()),
+    );
+  }, [searchQuery, trucks]);
   return (
     <>
       <div>
@@ -36,6 +55,16 @@ function Trucks() {
             ""
           )}
         </div>
+        <div className="p-2 mb-3 input-group">
+          <span className="input-group-text">🔍</span>
+          <input
+            type="search"
+            className="form-control"
+            placeholder="Search by Truck Type, Driver, Truck No..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
         <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
@@ -50,8 +79,8 @@ function Trucks() {
               </tr>
             </thead>
             <tbody>
-              {trucks.length > 0 ? (
-                trucks.map((truck) => (
+              {filterTrucks.length > 0 ? (
+                filterTrucks.map((truck) => (
                   <tr key={truck.id}>
                     <td>{truck.truck_no}</td>
                     <td>{truck.type}</td>
@@ -60,8 +89,12 @@ function Trucks() {
                         ? truck.driver_info.name
                         : "No Driver Assigned"}
                     </td>
-                    <td>{truck.last_maintenance?truck.last_maintenance:'Not yet Maintained'}</td>
-                    <td>{truck.next_due?truck.next_due:'Not scheduled'}</td>
+                    <td>
+                      {truck.last_maintenance
+                        ? truck.last_maintenance
+                        : "Not yet Maintained"}
+                    </td>
+                    <td>{truck.next_due ? truck.next_due : "Not scheduled"}</td>
                     <td>
                       {truck.status}
                       <IoMdArrowDropdown />

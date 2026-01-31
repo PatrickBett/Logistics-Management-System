@@ -185,18 +185,21 @@ export const AdminProvider = ({ children }) => {
   };
   // edit journey
   const handleEditJourney = async (updatedJourneyData) => {
+    console.log("Updated Journey Data:", updatedJourneyData);
     try {
       const res = await api.put(
         `api/journeys/${updatedJourneyData.id}/`,
         updatedJourneyData,
       );
       const updatedJourney = res.data;
+      console.log("Updated Journey:", updatedJourney);
       setJourneys((prev) =>
         prev.map((j) => (j.id === updatedJourney.id ? updatedJourney : j)),
       );
       toast.success("Editing Successfull");
     } catch (e) {
       toast.error("Error Editing Journey");
+      console.log("This is error",e)
     }
   };
   useEffect(() => {

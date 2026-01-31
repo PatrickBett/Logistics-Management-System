@@ -22,7 +22,7 @@ function TripsChart() {
         <PieChart>
           <Pie
             data={drivers}
-            dataKey="trips"
+            dataKey="complete_trips"
             nameKey="name"
             cx="50%"
             cy="50%"

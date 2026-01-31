@@ -1,112 +1,126 @@
-import React from "react";
+import React, { useContext } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
-import { useContext } from "react";
-import {
-  FaTruck,
-  FaUser,
-  FaTachometerAlt,
-  FaChartBar,
-  FaUsers,
-  FaRoute,
-} from "react-icons/fa";
+import { FaTruck, FaUser, FaUsers, FaRoute } from "react-icons/fa";
 import TripsChart from "../../charts/TripsChart";
 
 function Dashboard() {
   const { drivers, trucks, journeys, parties } = useContext(AdminContext);
-  console.log("Dashboard Drivers", drivers);
+
   return (
-    <div>
-      <h2 className="mb-4 mt-3">Welcome Admin</h2>
+    <div className="container-fluid px-3">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4 mt-3">
+        <h2 className="fw-semibold">Admin Dashboard</h2>
+      </div>
 
-      <div className="row g-3 mb-5">
+      {/* Summary cards */}
+      <div className="row g-4 mb-5">
         <div className="col-12 col-sm-6 col-md-3">
-          <div className="border p-4 text-center">
-            <h5>
-              <FaUser className="me-2" />
-              Total Drivers
-            </h5>
-            <p className="fw-bold fs-4">{drivers.length}</p>
+          <div className="card shadow-sm border-0 h-100">
+            <div className="card-body text-center">
+              <FaUser className="fs-3 text-primary mb-2" />
+              <h6 className="text-muted mb-1">Total Drivers</h6>
+              <div className="fs-3 fw-bold">{drivers.length}</div>
+            </div>
           </div>
         </div>
 
         <div className="col-12 col-sm-6 col-md-3">
-          <div className="border p-4 text-center">
-            <h5>
-              <FaTruck className="me-2" />
-              Total Trucks
-            </h5>
-            <p className="fw-bold fs-4">{trucks.length}</p>
+          <div className="card shadow-sm border-0 h-100">
+            <div className="card-body text-center">
+              <FaTruck className="fs-3 text-success mb-2" />
+              <h6 className="text-muted mb-1">Total Trucks</h6>
+              <div className="fs-3 fw-bold">{trucks.length}</div>
+            </div>
           </div>
         </div>
 
         <div className="col-12 col-sm-6 col-md-3">
-          <div className="border p-4 text-center">
-            <h5>
-              <FaUsers className="me-2" /> Total Parties
-            </h5>
-            <p className="fw-bold fs-4">{parties.length}</p>
+          <div className="card shadow-sm border-0 h-100">
+            <div className="card-body text-center">
+              <FaUsers className="fs-3 text-warning mb-2" />
+              <h6 className="text-muted mb-1">Total Parties</h6>
+              <div className="fs-3 fw-bold">{parties.length}</div>
+            </div>
           </div>
         </div>
+
         <div className="col-12 col-sm-6 col-md-3">
-          <div className="border p-4 text-center">
-            <h5>
-              <FaRoute className="me-2" />
-              Total Journeys
-            </h5>
-            <p className="fw-bold fs-4">{journeys.length}</p>
+          <div className="card shadow-sm border-0 h-100">
+            <div className="card-body text-center">
+              <FaRoute className="fs-3 text-danger mb-2" />
+              <h6 className="text-muted mb-1">Total Journeys</h6>
+              <div className="fs-3 fw-bold">{journeys.length}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="row">
-        <h5>Drivers on Leave</h5>
-        <div className="table-responsive col-sm-6">
-          <table className="table table-bordered g-3">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>License No</th>
-                <th>Phone No</th>
-                <th>Leave Date</th>
-                <th>Return Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drivers.filter((driver) => driver.status === "onLeave").length >
-              0 ? (
-                drivers
-                  .filter((driver) => driver.status === "onLeave")
-                  .map((driver) => (
-                    <tr key={driver.id}>
-                      <td>{driver.name}</td>
-                      <td>{driver.license_no}</td>
-                      <td>{driver.phone}</td>
-                      <td>
-                        {driver.leave_date
-                          ? driver.leave_date.slice(0, 16)
-                          : ""}
-                      </td>
-                      <td>
-                        {driver.return_date
-                          ? driver.return_date.slice(0, 16)
-                          : ""}
+      {/* Tables & charts */}
+      <div className="row g-4">
+        {/* Drivers on leave */}
+        <div className="col-lg-6">
+          <div className="card shadow-sm border-0 h-100">
+            <div className="card-header bg-white fw-semibold">
+              Drivers on Leave
+            </div>
+            <div className="card-body table-responsive">
+              <table className="table table-sm table-striped table-hover align-middle">
+                <thead className="table-light">
+                  <tr>
+                    <th>Name</th>
+                    <th>License No</th>
+                    <th>Phone</th>
+                    <th>Leave Date</th>
+                    <th>Return Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {drivers.filter((d) => d.status === "onLeave").length > 0 ? (
+                    drivers
+                      .filter((d) => d.status === "onLeave")
+                      .map((driver) => (
+                        <tr key={driver.id}>
+                          <td className="fw-medium">{driver.name}</td>
+                          <td>{driver.license_no}</td>
+                          <td>{driver.phone}</td>
+                          <td>
+                            {driver.leave_date
+                              ? driver.leave_date.slice(0, 16)
+                              : "—"}
+                          </td>
+                          <td>
+                            {driver.return_date
+                              ? driver.return_date.slice(0, 16)
+                              : "—"}
+                          </td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="text-center text-muted py-4">
+                        No driver currently on leave
                       </td>
                     </tr>
-                  ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="text-center">
-                    No Driver Currently On Leave
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div className="col-sm-6">
-          <h5>Trips By Drivers</h5>
-          <div>
-            <TripsChart className="mt-5 pt-5" />
+
+        {/* Chart */}
+        <div className="col-lg-6">
+          <div className="card shadow-sm border-0 h-100">
+            <div className="card-header bg-white fw-semibold">
+              Trips by Drivers
+            </div>
+            <div
+              className="card-body d-flex align-items-center justify-content-center"
+              style={{ minHeight: "320px" }}
+            >
+              <TripsChart />
+            </div>
           </div>
         </div>
       </div>

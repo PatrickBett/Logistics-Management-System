@@ -32,7 +32,9 @@ class Driver(models.Model):
     name = models.CharField(max_length=20)
     phone = models.CharField(max_length=12)
     email = models.CharField(max_length=60)
-    trips = models.PositiveBigIntegerField(default=0)
+    incomplete_trips = models.PositiveBigIntegerField(default=0)
+    complete_trips = models.PositiveBigIntegerField(default=0)
+    # trips = models.PositiveBigIntegerField(default=0)
     leave_date = models.DateTimeField(null=True, blank=True)
     return_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(choices=ACTION_CHOICES, default='isAvailable')
@@ -98,10 +100,33 @@ class Journey(models.Model):
 
     def __str__(self):
         return self.party.name
+    
+    def check_journey_status(self, old_status = None):
+        if not self.driver:
+            return
+
+        if old_status != 'delivered' and self.status == 'delivered':
+            self.driver.complete_trips += 1
+            if self.driver.incomplete_trips > 0:
+                self.driver.incomplete_trips -= 1
+
+        elif (old_status != 'inprogress' and self.status == 'inprogress'):
+            self.driver.complete_trips += 1
+            if self.driver.incomplete_trips > 0:
+                self.driver.incomplete_trips -= 1
+        elif (old_status != 'shipping' and self.status == 'shipping'):
+            self.driver.complete_trips += 1
+            if self.driver.incomplete_trips > 0:
+                self.driver.incomplete_trips -= 1
+        self.driver.save()
+
     def save(self, *args, **kwargs):
         # Ensure driver only uses their own truck
         if self.driver and self.truck:
             if self.truck.driver != self.driver:
                 raise ValueError("Driver can only be assigned to their own truck.")
+        self.check_journey_status(old_status=None)
+        print("Journey status checked and driver trips updated.")
         super().save(*args, **kwargs)
+       
 

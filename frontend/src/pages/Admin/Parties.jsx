@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FaPlus } from "react-icons/fa";
 import AddPartyModal from "../Modals/AddPartyModal";
 import { useState, useEffect, useContext } from "react";
@@ -9,8 +9,25 @@ import { toast } from "react-toastify";
 import EditParty from "../Modals/EditParty";
 
 function Parties() {
-  const { parties, setParties, handleDeleteParty,isEditingParty, setEditingParty,handleEditParty } = useContext(AdminContext);
+  const {
+    parties,
+    setParties,
+    handleDeleteParty,
+    isEditingParty,
+    setEditingParty,
+    handleEditParty,
+  } = useContext(AdminContext);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredParties = useMemo(() => {
+    return parties.filter((party) => {
+      const name = party.name?.toLowerCase() || "";
+      const contactPerson = party.contact_person?.toLowerCase() || "";
+      const query = searchQuery.toLowerCase();
+      return name.includes(query) || contactPerson.includes(query);
+    });
+  }, [searchQuery, parties]);
   return (
     <>
       <div>
@@ -29,6 +46,16 @@ function Parties() {
             </button>
           </div>
         </div>
+        <div className="p-2 mb-3 input-group">
+          <span className="input-group-text">🔍</span>
+          <input
+            type="search"
+            className="form-control"
+            placeholder="Search by name or contact person..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
         <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
@@ -43,8 +70,8 @@ function Parties() {
               </tr>
             </thead>
             <tbody>
-              {parties.length > 0 ? (
-                parties.map((party) => (
+              {filteredParties.length > 0 ? (
+                filteredParties.map((party) => (
                   <tr key={party.id}>
                     <td>{party.name}</td>
                     <td>{party.contact_person}</td>
@@ -57,9 +84,9 @@ function Parties() {
                         className="btn btn-primary"
                         data-bs-toggle="modal"
                         data-bs-target="#edit-party-modal"
-                        onClick={()=>{
+                        onClick={() => {
                           setEditingParty(party);
-                          console.log(isEditingParty)
+                          console.log(isEditingParty);
                         }}
                       >
                         <MdModeEdit />

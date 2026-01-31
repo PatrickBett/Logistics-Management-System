@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { AdminContext } from "../../contexts/AdminContext";
 
 function AddJourney() {
-  const { drivers, trucks, parties } = useContext(AdminContext);
+  const { drivers, trucks, parties, setJourneys } = useContext(AdminContext);
   const [driver, setDriver] = useState("");
   const [truck, setTruck] = useState("");
   const [party, setParty] = useState("");
@@ -29,6 +29,9 @@ function AddJourney() {
         status,
       });
       console.log(res.data);
+      const newJourney = res.data;
+      setJourneys((prev) => [newJourney, ...prev]); // Add new journey to the list
+
       toast.success("Journey Added Successfull");
       (setDriver(""),
         setTruck(""),

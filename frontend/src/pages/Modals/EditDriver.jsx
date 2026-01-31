@@ -8,6 +8,7 @@ function EditDriver({ driver, handleEdit }) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [trips, setTrips] = useState(0);
+  const [incomplete_trips, setIncompleteTrips] = useState(0);
   const [status, setStatus] = useState("");
   const [leaveDate, setLeaveDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
@@ -19,7 +20,8 @@ function EditDriver({ driver, handleEdit }) {
       name,
       phone,
       email,
-      trips,
+      complete_trips: trips,
+      incomplete_trips: incomplete_trips,
       status,
       leave_date: leaveDate,
       return_date: returnDate,
@@ -32,7 +34,8 @@ function EditDriver({ driver, handleEdit }) {
       setName(driver.name);
       setPhone(driver.phone);
       setEmail(driver.email);
-      setTrips(driver.trips);
+      setIncompleteTrips(driver.incomplete_trips);
+      setTrips(driver.complete_trips);
       setStatus(driver.status);
       setLeaveDate(driver.leave_date);
       setReturnDate(driver.return_date);
@@ -89,6 +92,15 @@ function EditDriver({ driver, handleEdit }) {
                 />
               </div>
               <div className="mb-2">
+                <label className="form-label">Incomplete Trips</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={incomplete_trips}
+                  onChange={(e) => setIncompleteTrips(e.target.value)}
+                />
+              </div>
+              <div className="mb-2">
                 <label className="form-label">Trips</label>
                 <input
                   type="number"
@@ -124,7 +136,7 @@ function EditDriver({ driver, handleEdit }) {
                   type="datetime-local"
                   className="form-control"
                   value={returnDate}
-                  readOnly
+                  onChange={(e) => setReturnDate(e.target.value)}
                 />
               </div>
             </form>

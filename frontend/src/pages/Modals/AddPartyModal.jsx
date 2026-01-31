@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../api";
+import { AdminContext } from "../../contexts/AdminContext";
 function AddPartyModal() {
+  const { setParties } = useContext(AdminContext);
+
   const [partyName, setPartyName] = useState("");
   const [contact, setContact] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,6 +24,10 @@ function AddPartyModal() {
         status,
         total_vol: totalvol,
       });
+
+      const newParty = res.data;
+      setParties((prev) => [newParty, ...prev]);
+
       toast.success("Party Added Successfully");
       setPartyName("");
       setContact("");
