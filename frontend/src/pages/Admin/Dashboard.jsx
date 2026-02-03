@@ -1,10 +1,18 @@
 import React, { useContext } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
-import { FaTruck, FaUser, FaUsers, FaRoute } from "react-icons/fa";
+import {
+  FaTruck,
+  FaUser,
+  FaUsers,
+  FaRoute,
+  FaMoneyBillWave,
+} from "react-icons/fa";
 import TripsChart from "../../charts/TripsChart";
 
 function Dashboard() {
-  const { drivers, trucks, journeys, parties } = useContext(AdminContext);
+  const { drivers, trucks, journeys, parties, totalrevenue, totalweighttransported } = useContext(AdminContext);
+  console.log("Journies in dashboard", journeys);
+
 
   return (
     <div className="container-fluid px-3">
@@ -58,9 +66,63 @@ function Dashboard() {
 
       {/* Tables & charts */}
       <div className="row g-4">
+        <div className="col-lg-6">
+          <div
+            className="card shadow-sm border-0 h-100"
+            style={{ background: "#F8F9FA" }}
+          >
+            <div className="card-header bg-white fw-semibold">
+              Company Updates
+            </div>
+            {/* <div
+              className="card-body d-flex align-items-center justify-content-center"
+              style={{ minHeight: "320px" }}
+            >
+              <TripsChart />
+            </div> */}
+            <div className="card-body">
+              <div className="row g-3">
+                <div className=" col-sm-4">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body text-center">
+                      <FaMoneyBillWave className="fs-3 text-warning mb-2" />
+                      <h6 className="text-muted mb-1">Total Revenue</h6>
+                      <div className="fs-4 fw-bold">KES {totalrevenue}</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-sm-4">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body text-center">
+                      <FaMoneyBillWave className="fs-3 text-warning mb-2" />
+                      <h6 className="text-muted mb-1">
+                        Total Weight Transported
+                      </h6>
+                      <div className="fs-4 fw-bold">
+                        KES {totalweighttransported}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className=" col-sm-4">
+                  <div className="card shadow-sm border-0 h-100">
+                    <div className="card-body text-center">
+                      <FaUsers className="fs-3 text-warning mb-2" />
+                      <h6 className="text-muted mb-1">Total Revenue</h6>
+                      <div className="fs-4 fw-bold">KES {totalrevenue}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Drivers on leave */}
         <div className="col-lg-6">
-          <div className="card shadow-sm border-0 h-100">
+          <div
+            className="card shadow-sm border-0 h-100"
+            style={{ background: "#F8F9FA" }}
+          >
             <div className="card-header bg-white fw-semibold">
               Drivers on Leave
             </div>
@@ -110,19 +172,6 @@ function Dashboard() {
         </div>
 
         {/* Chart */}
-        <div className="col-lg-6">
-          <div className="card shadow-sm border-0 h-100">
-            <div className="card-header bg-white fw-semibold">
-              Trips by Drivers
-            </div>
-            <div
-              className="card-body d-flex align-items-center justify-content-center"
-              style={{ minHeight: "320px" }}
-            >
-              <TripsChart />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

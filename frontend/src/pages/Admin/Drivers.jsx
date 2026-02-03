@@ -108,16 +108,12 @@ function Drivers() {
                     <td className="text-center">{driver.incomplete_trips}</td>
                     <td className="text-center">{driver.complete_trips}</td>
 
-                    <td
-                      className={
-                        driver.status === "onLeave"
-                          ? "text-danger"
-                          : driver.status === "onDuty"
-                            ? "text-success"
-                            : "text-info"
-                      }
-                    >
-                      {driver.status === "onLeave" ? "Leave" : driver.status === "onDuty" ? "On Duty" : "Available"}
+                    <td className="text-center">
+                      {driver.status === "onLeave"
+                        ? "Leave"
+                        : driver.status === "onDuty"
+                          ? "On Duty"
+                          : "Available"}
                     </td>
 
                     <td className="d-flex align-items-center gap-2">

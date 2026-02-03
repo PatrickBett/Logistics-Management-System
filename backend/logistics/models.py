@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Sum
 # Create your models here.
 
 class User(AbstractUser):
@@ -44,10 +45,19 @@ class Driver(models.Model):
 
     def save(self, *args, **kwargs):
         # Update leave_date automatically when status is changed to 'onLeave'
-        if self.status == 'onLeave' and not self.leave_date:
-            self.leave_date = timezone.now()
+        now = timezone.now()
+        if self.status == 'onLeave' and self.incomplete_trips == 0 and not self.leave_date:
+            self.leave_date = now
             self.return_date = self.leave_date + timedelta(days=4)
             print("Leave automated")
+
+
+        if self.incomplete_trips >0:
+            self.status = 'onDuty'
+        elif self.incomplete_trips ==0 and self.status !='onLeave':
+            self.status = 'isAvailable'
+
+
         super().save(*args, **kwargs)
 class Party(models.Model):
     ACTION_CHOICES =(
@@ -60,11 +70,29 @@ class Party(models.Model):
     phone = models.CharField(max_length=12)
     email = models.CharField(max_length=60)
     status = models.CharField(choices=ACTION_CHOICES, default='isActive')
-    total_vol = models.IntegerField()
+    total_vol = models.IntegerField(default=0)
+    voltransported = models.IntegerField(default=0)
+    pricepaid = models.IntegerField( default=0)
     price = models.IntegerField( default=0)
 
     def __str__(self):
         return self.name
+    
+    # Function to calculate the weights transported in a journey
+    # def get_weight_transported(self):
+        
+    #     total = Journey.objects.filter(party=self, status='delivered').aggregate(total=Sum('weight')).get('total') or 0
+    #     print("Total journies",total)
+    #     return total
+    # def save(self, *args, **kwargs):
+        
+    #     self.voltransported = self.get_weight_transported()
+    #     super().save(*args, **kwargs)
+        
+    
+    
+        
+    
 
 class Truck(models.Model):
     ACTION_CHOICES =(
@@ -126,7 +154,6 @@ class Journey(models.Model):
 
         self.driver.save()
         return self.status
-
 
     def save(self, *args, **kwargs):
         # Ensure driver only uses their own truck

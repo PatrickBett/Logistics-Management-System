@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useMemo } from "react";
 import api from "../api";
 import { toast } from "react-toastify";
 import EditParty from "../pages/Modals/EditParty";
@@ -16,11 +16,14 @@ export const AdminProvider = ({ children }) => {
   const [parties, setParties] = useState([]);
   const [trucks, setTrucks] = useState([]);
   const [journeys, setJourneys] = useState([]);
+  const [selectedStatus, setselectedStatus] = useState("All");
+
   //fetch parties
   const fetchParties = async () => {
     try {
       const res = await api.get("api/parties/");
       setParties(res.data);
+
       console.log("Parties", res.data);
     } catch (e) {
       console.log(e);
@@ -48,6 +51,17 @@ export const AdminProvider = ({ children }) => {
       toast.success("Party Deleted successfully");
     } catch (e) {
       console.log(e);
+    }
+  };
+  //delete journey
+  const handleDeleteTruck = async (id) => {
+    try {
+      const res = await api.delete(`api/trucks/${id}/`);
+      setTrucks((prev) => prev.filter((t) => t.id !== id));
+      toast.success("Truck Deleted Successfully");
+    } catch (e) {
+      console.log(e);
+      toast.error("Error Deleting Truck");
     }
   };
   //fetch Journeys
@@ -209,6 +223,31 @@ export const AdminProvider = ({ children }) => {
       setIsAuthenticated(true);
     }
   }, []);
+  //calculate total revenue in a company using reduce
+  const totalrevenue = useMemo(() => {
+    const totalrevenue = parties.reduce((total, party) => {
+      return total + Number(party.price || 0);
+    }, 0);
+    return totalrevenue;
+  }, [parties]);
+
+  //calculate total weight transported of a party using reduce
+  const totalweighttransported = useMemo(() => {
+    const totalweighttransported = journeys.reduce((total, journey) => {
+      return total + journey.weight || 0;
+    }, 0);
+    return totalweighttransported;
+  }, [journeys]);
+  // filter drivers by status
+  const filtereddriverbystatus = (status) => {
+    setselectedStatus(status);
+    if (status === "All") {
+      setselectedStatus(drivers);
+    } else {
+      const filtered = drivers.filter((driver) => driver.status === status);
+      setselectedStatus(filtered);
+    }
+  };
 
   return (
     <AdminContext.Provider
@@ -234,6 +273,7 @@ export const AdminProvider = ({ children }) => {
         setParties,
         handleDeleteParty,
         handleDeleteJourney,
+        handleDeleteTruck,
         isEditingTruck,
         setEditingTruck,
         handleEditTruck,
@@ -243,9 +283,13 @@ export const AdminProvider = ({ children }) => {
         isEditingJourney,
         setEditingJourney,
         handleEditJourney,
+        totalrevenue,
+        totalweighttransported,
+        selectedStatus,
+        filtereddriverbystatus,
       }}
     >
       {children}
     </AdminContext.Provider>
   );
-};
+};;

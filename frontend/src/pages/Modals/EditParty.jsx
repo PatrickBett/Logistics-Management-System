@@ -10,7 +10,9 @@ function EditParty({ party, handleEditParty }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const [totalVol, setTotalVol] = useState("");
+  const [voltransported, setVolTransported] = useState(0);
   const [price, setPrice] = useState("");
+  const [pricepaid, setPricePaid] = useState("");
 
   const handleClickEditParty = () => {
     handleEditParty({
@@ -21,11 +23,13 @@ function EditParty({ party, handleEditParty }) {
       email,
       status,
       total_vol: totalVol,
+      voltransported,
       price,
+      pricepaid,
     });
     console.log(
       "Edited info",
-      
+
       name,
       contactPerson,
       phone,
@@ -43,6 +47,8 @@ function EditParty({ party, handleEditParty }) {
       setEmail(party.email);
       setStatus(party.status);
       setTotalVol(party.total_vol);
+      setVolTransported(party.voltransported);
+      setPricePaid(party.pricepaid);
       setPrice(party.price);
     }
   }, [party]);
@@ -104,11 +110,27 @@ function EditParty({ party, handleEditParty }) {
                 />
               </div>
               <div className="mb-3">
+                <label>Volume Transported</label>
+                <input
+                  className="form-control"
+                  value={voltransported}
+                  onChange={(e) => setVolTransported(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
                 <label>Price</label>
                 <input
                   className="form-control"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <label>Price Paid</label>
+                <input
+                  className="form-control"
+                  value={pricepaid}
+                  onChange={(e) => setPricePaid(e.target.value)}
                 />
               </div>
               <div className="mb-3">

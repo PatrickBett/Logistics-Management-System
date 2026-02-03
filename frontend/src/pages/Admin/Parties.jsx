@@ -65,7 +65,9 @@ function Parties() {
                 <th>Phone</th>
                 <th>Email</th>
                 <th>Weight to be transported</th>
+                <th>Transported Weight</th>
                 <th>Total Price</th>
+                <th>Price Paid</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
@@ -79,8 +81,12 @@ function Parties() {
                     <td>{party.phone}</td>
                     <td>{party.email}</td>
                     <td className="text-center">{party.total_vol} Kgs</td>
+                    <td className="text-center">{party.voltransported} Kgs</td>
                     <td className="text-center">{party.price} KES</td>
-                    <td>{party.status}</td>
+                    <td className="text-center">{party.pricepaid} KES</td>
+                    <td>
+                      {party.status == "isActive" ? "Active" : "Inactive"}
+                    </td>
                     <td className="d-flex align-items-center gap-2">
                       <button
                         className="btn btn-primary"

@@ -14,6 +14,7 @@ function Trucks() {
     isLoading,
     setIsLoading,
     fetchTrucks,
+    handleDeleteTruck,
     trucks,
     setTrucks,
     isEditingTruck,
@@ -95,9 +96,10 @@ function Trucks() {
                         : "Not yet Maintained"}
                     </td>
                     <td>{truck.next_due ? truck.next_due : "Not scheduled"}</td>
-                    <td>
-                      {truck.status}
-                      <IoMdArrowDropdown />
+                    <td className="text-center">
+                      {truck.status == "onMaintenance"
+                        ? "On Maintenance"
+                        : "Good Condition"}
                     </td>
                     <td className="d-flex align-items-center gap-2">
                       <button
@@ -112,7 +114,7 @@ function Trucks() {
                         <MdModeEdit />
                       </button>
 
-                      <button className="btn btn-danger">
+                      <button className="btn btn-danger" onClick={()=>{handleDeleteTruck(truck.id)}}>
                         <MdDelete />
                       </button>
                     </td>

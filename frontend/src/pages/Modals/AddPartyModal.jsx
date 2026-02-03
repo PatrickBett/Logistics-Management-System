@@ -10,7 +10,9 @@ function AddPartyModal() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [totalvol, setTotalVol] = useState("");
+  const [voltransported, setVolTransported] = useState(0);
   const [price, setPrice] = useState("");
+  const [pricepaid, setPricePaid] = useState("");
   const [status, setStatus] = useState("");
 
   const handleSave = async (e) => {
@@ -24,7 +26,9 @@ function AddPartyModal() {
         email,
         status,
         total_vol: totalvol,
+        voltransported,
         price,
+        pricepaid,
       });
 
       const newParty = res.data;
@@ -36,7 +40,9 @@ function AddPartyModal() {
       setPhone("");
       setEmail("");
       setTotalVol("");
+      setVolTransported("");
       setPrice("");
+      setPricePaid("");
       setStatus("");
     } catch (e) {
       toast.error("Error Adding Party");
@@ -110,12 +116,31 @@ function AddPartyModal() {
                 />
               </div>
               <div className="mb-3">
+                <label className="form-label">Weight Transported</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={voltransported}
+                  onChange={(e) => setVolTransported(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
                 <label className="form-label">Price</label>
                 <input
                   type="number"
                   className="form-control"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Price Paid</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={pricepaid}
+                  onChange={(e) => setPricePaid(e.target.value)}
                 />
               </div>
               <div className="mb-3">
