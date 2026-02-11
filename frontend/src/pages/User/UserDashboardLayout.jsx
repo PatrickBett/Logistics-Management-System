@@ -60,14 +60,14 @@ function UserDashboardLayout() {
             className="p-3 text-decoration-none sidebar-link"
           >
             <FaTruck className="me-2" />
-            Trucks
+            My Truck
           </NavLink>
 
           <NavLink
             to="/user/journeys"
             className="p-3 text-decoration-none sidebar-link"
           >
-            <FaRoute className="me-2" /> Journeys
+            <FaRoute className="me-2" /> My Journeys
           </NavLink>
 
           <span

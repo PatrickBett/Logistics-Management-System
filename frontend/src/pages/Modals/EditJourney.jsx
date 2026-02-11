@@ -12,6 +12,7 @@ function EditJourney({ handleEditJourney, journey }) {
   const [weight, setWeight] = useState(0);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
+  const [date, setDate] = useState("");
 
   const handleClickEditJourney = () => {
     try {
@@ -25,6 +26,7 @@ function EditJourney({ handleEditJourney, journey }) {
         weight,
         description,
         status,
+        date,
       });
     } catch (err) {
       console.error("Error updating journey:", err);
@@ -40,6 +42,7 @@ function EditJourney({ handleEditJourney, journey }) {
       setWeight(journey.weight);
       setDescription(journey.description);
       setStatus(journey.status);
+      setDate(journey.date);
     }
   }, [journey]);
   return (
@@ -151,6 +154,18 @@ function EditJourney({ handleEditJourney, journey }) {
                   <option value="delivered">Delivered</option>
                 </select>
               </div>
+
+              <div className="mb-3">
+                <label>Date</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  onChange={(e) => setDate(e.target.value)}
+                  value={date}
+                />
+                 
+              </div>
+
             </form>
           </div>
           <div className="modal-footer">

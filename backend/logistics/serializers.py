@@ -102,3 +102,8 @@ class JourneySerializer(serializers.ModelSerializer):
     class Meta:
         model = Journey
         fields = '__all__'
+# serializers.py
+class JourneyStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Journey
+        fields = ['status']

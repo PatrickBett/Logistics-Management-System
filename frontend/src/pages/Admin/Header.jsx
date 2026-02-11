@@ -16,6 +16,7 @@ function Header({ onToggleSidebar, sidebarOpen }) {
       </div>
 
       <div className="col text-end" onClick={() => alert("Profile")}>
+        <FaBell className="text-dark me-5" />
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/250px-Outdoors-man-portrait_%28cropped%29.jpg"
           style={{ width: "40px", height: "40px", borderRadius: "50%" }}

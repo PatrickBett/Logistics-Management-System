@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { AdminContext } from "../../contexts/AdminContext";
 
 function AddJourney() {
-  const { drivers, trucks, parties, setJourneys, fetchDrivers } =
+  const { drivers, trucks, parties, setJourneys, fetchDrivers, fetchParties } =
     useContext(AdminContext);
   const [driver, setDriver] = useState("");
   const [truck, setTruck] = useState("");
@@ -15,19 +15,10 @@ function AddJourney() {
   const [weight, setWeight] = useState(0);
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
+  const [date, setDate] = useState("");
 
   const addJourney = async (e) => {
     e.preventDefault();
-    console.log("Adding Journey with data:", {
-      driver,
-      truck,
-      party,
-      startingpoint,
-      destination,
-      weight,
-      description,
-      status,
-    });
     try {
       const res = await api.post("api/journeys/", {
         driver,
@@ -38,7 +29,9 @@ function AddJourney() {
         weight,
         description,
         status,
+        date,
       });
+      fetchParties();
       console.log(res.data);
       const newJourney = res.data;
       setJourneys((prev) => [newJourney, ...prev]); // Add new journey to the list
@@ -52,7 +45,8 @@ function AddJourney() {
         setDestination(""),
         setWeight(0),
         setDescription(""),
-        setStatus(""));
+        setStatus(""),
+        setDate(""));
     } catch (e) {
       toast.error("Error Adding Journey");
       console.log(e);
@@ -175,6 +169,16 @@ function AddJourney() {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
+              <div className="mb-3">
+                <label>Date</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </div>
+
               <div className="mb-3">
                 <label>Status</label>
                 <select

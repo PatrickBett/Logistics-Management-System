@@ -37,7 +37,8 @@ export const AdminProvider = ({ children }) => {
     try {
       const res = await api.delete(`api/journeys/${id}/`);
       setJourneys((prev) => prev.filter((j) => j.id !== id));
-      toast.success("Driver Deleted Successfully");
+      fetchParties();
+      toast.success("Journey Deleted Successfully");
     } catch (e) {
       console.log(e);
       toast.error("Error Deleting Driver");
@@ -69,6 +70,7 @@ export const AdminProvider = ({ children }) => {
     try {
       const res = await api.get("api/journeys/");
       setJourneys(res.data);
+
       console.log("Journies", res.data);
     } catch (e) {
       console.log(e);
@@ -207,6 +209,7 @@ export const AdminProvider = ({ children }) => {
       );
       const updatedJourney = res.data;
       fetchDrivers(); // Refresh drivers to update their trip counts
+      fetchParties(); // Refresh parties to update their voltransported
       console.log("Updated Journey:", updatedJourney);
       setJourneys((prev) =>
         prev.map((j) => (j.id === updatedJourney.id ? updatedJourney : j)),
@@ -263,6 +266,7 @@ export const AdminProvider = ({ children }) => {
         setDrivers,
         handleEdit,
         handleAddDriver,
+        fetchParties,
         handleDelete,
         trucks,
         setTrucks,
@@ -292,4 +296,4 @@ export const AdminProvider = ({ children }) => {
       {children}
     </AdminContext.Provider>
   );
-};;
+};

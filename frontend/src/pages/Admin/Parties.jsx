@@ -19,15 +19,26 @@ function Parties() {
   } = useContext(AdminContext);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const [filter, setFilter] = useState("all"); // all, isactive, isnotactive
 
   const filteredParties = useMemo(() => {
-    return parties.filter((party) => {
-      const name = party.name?.toLowerCase() || "";
-      const contactPerson = party.contact_person?.toLowerCase() || "";
-      const query = searchQuery.toLowerCase();
-      return name.includes(query) || contactPerson.includes(query);
-    });
-  }, [searchQuery, parties]);
+    return parties
+      .filter((party) => {
+        const name = party.name?.toLowerCase() || "";
+        const contactPerson = party.contact_person?.toLowerCase() || "";
+        const query = searchQuery.toLowerCase();
+        return name.includes(query) || contactPerson.includes(query);
+      })
+      .filter((party) => {
+        if (filter === "isactive") {
+          return party.status === "isActive";
+        } else if (filter === "isnotactive") {
+          return party.status === "isNotActive";
+        }
+        return true;
+      });
+  }, [searchQuery, parties, filter]);
   return (
     <>
       <div>
@@ -56,10 +67,56 @@ function Parties() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+        {/* Filter Navbar */}
+        <div
+          style={{
+            display: "flex",
+
+            gap: "30px",
+            marginBottom: "25px",
+            borderBottom: "2px solid #e0e0e0", // bottom line for navbar
+            paddingBottom: "10px",
+          }}
+        >
+          {["all", "isactive", "isnotactive"].map((type) => (
+            <div
+              key={type}
+              onClick={() => setFilter(type)}
+              style={{
+                cursor: "pointer",
+                fontWeight: "600",
+                paddingBottom: "5px",
+                color: filter === type ? "#1a839a" : "#555",
+                borderBottom:
+                  filter === type
+                    ? "3px solid #1a839a"
+                    : "3px solid transparent",
+                transition: "0.3s",
+              }}
+            >
+              {type === "all"
+                ? "All"
+                : type === "isactive"
+                  ? "Active"
+                  : "Inactive"}
+            </div>
+          ))}
+          <div className="col text-end">
+            <button
+              className="btn btn-outline-primary"
+              onClick={() =>
+                (window.location.href = `${API_BASE_URL}/api/parties/download_csv/`)
+              }
+            >
+              Download CSV
+            </button>
+          </div>
+        </div>
         <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
               <tr className="text-center">
+                <th>ID</th>
                 <th>Name</th>
                 <th>Contact Person</th>
                 <th>Phone</th>
@@ -74,8 +131,9 @@ function Parties() {
             </thead>
             <tbody>
               {filteredParties.length > 0 ? (
-                filteredParties.map((party) => (
+                filteredParties.map((party, index) => (
                   <tr key={party.id}>
+                    <td>{index + 1}</td>
                     <td>{party.name}</td>
                     <td>{party.contact_person}</td>
                     <td>{party.phone}</td>
@@ -111,7 +169,7 @@ function Parties() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="text-center">
+                  <td colSpan={11} className="text-center">
                     No Party Available
                   </td>
                 </tr>

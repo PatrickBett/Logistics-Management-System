@@ -18,22 +18,40 @@ function Journeys() {
   } = useContext(AdminContext);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const [filter, setFilter] = useState("all"); // all, cancelled, inprogress, shipping, delivered
   console.log("Trucks in Journeys Component:", trucks);
 
   // 🔍 SEARCH LOGIC (SAFE + OPTIMIZED)
   const filteredJourneys = useMemo(() => {
     const query = searchQuery.toLowerCase();
 
-    return journeys.filter((journey) => {
-      const driver = journey.driver_info?.name?.toLowerCase() || "";
-      const truck = journey.truck_info?.truck_no?.toLowerCase() || "";
-      const party = journey.party_info?.name?.toLowerCase() || "";
+    return journeys
+      .filter((journey) => {
+        const driver = journey.driver_info?.name?.toLowerCase() || "";
+        const truck = journey.truck_info?.truck_no?.toLowerCase() || "";
+        const party = journey.party_info?.name?.toLowerCase() || "";
 
-      return (
-        driver.includes(query) || truck.includes(query) || party.includes(query)
-      );
-    });
-  }, [journeys, searchQuery]);
+        return (
+          driver.includes(query) ||
+          truck.includes(query) ||
+          party.includes(query)
+        );
+      })
+      .filter((journey) => {
+        if (filter === "cancelled") {
+          return journey.status === "cancelled";
+        } else if (filter === "inprogress") {
+          return journey.status === "inprogress";
+        } else if (filter === "shipping") {
+          return journey.status === "shipping";
+        } else if (filter === "delivered") {
+          return journey.status === "delivered";
+        }
+        return true;
+      });
+  }, [journeys, searchQuery, filter]);
+  console.log("Filtered Journeys:", filteredJourneys);
 
   return (
     <>
@@ -70,11 +88,69 @@ function Journeys() {
           />
         </div>
 
+        {/* Filter Navbar */}
+        <div
+          style={{
+            display: "flex",
+
+            gap: "20px",
+            marginBottom: "25px",
+            borderBottom: "2px solid #e0e0e0", // bottom line for navbar
+            paddingBottom: "10px",
+          }}
+        >
+          {role === "admin" ? (<>
+           { ["all", "cancelled", "inprogress", "shipping", "delivered"].map(
+              (type) => (
+                <div
+                  key={type}
+                  onClick={() => setFilter(type)}
+                  style={{
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    paddingBottom: "5px",
+                    color: filter === type ? "#1a839a" : "#555",
+                    borderBottom:
+                      filter === type
+                        ? "3px solid #1a839a"
+                        : "3px solid transparent",
+                    transition: "0.3s",
+                  }}
+                >
+                  {type === "all"
+                    ? "All"
+                    : type === "cancelled"
+                      ? "Cancelled"
+                      : type === "inprogress"
+                        ? "In Progress"
+                        : type === "shipping"
+                          ? "Shipping"
+                          : "Delivered"}
+                </div>
+              )
+            )}
+            <div className="col text-end">
+              <button
+                className="btn btn-outline-primary"
+                onClick={() =>
+                  (window.location.href = `${API_BASE_URL}/api/journeys/download_csv/`)
+                }
+              >
+                Download CSV
+              </button>
+            </div>
+          </>) : (
+            <h4>My Journeys</h4>
+          )}
+        </div>
+
         {/* TABLE */}
         <div className="table-responsive">
           <table className="table table-bordered align-middle">
             <thead>
               <tr>
+                <th>ID</th>
+                <th>Date</th>
                 <th>Driver</th>
                 <th>Truck</th>
                 <th>Party</th>
@@ -88,8 +164,10 @@ function Journeys() {
 
             <tbody>
               {filteredJourneys.length > 0 ? (
-                filteredJourneys.map((journey) => (
+                filteredJourneys.map((journey, index) => (
                   <tr key={journey.id}>
+                    <td>{index + 1}</td>
+                    <td>{journey.date}</td>
                     <td>{journey.driver_info?.name || "-"}</td>
                     <td>{journey.truck_info?.truck_no || "-"}</td>
                     <td>{journey.party_info?.name || "-"}</td>
@@ -136,7 +214,7 @@ function Journeys() {
               ) : (
                 <tr>
                   <td
-                    colSpan={role === "admin" ? 8 : 7}
+                    colSpan={role === "admin" ? 9 : 10}
                     className="text-center"
                   >
                     No Journeys Found

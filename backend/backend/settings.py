@@ -1,5 +1,10 @@
 from datetime import timedelta
 from pathlib import Path
+from celery.schedules import crontab
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'..
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -137,3 +142,32 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'logistics.User'
+TIME_ZONE = 'Africa/Nairobi'   # UTC+3
+USE_TZ = True
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+INSTALLED_APPS += ['django_celery_results']
+CELERY_RESULT_BACKEND = 'django-db'
+
+# CELERY_BEAT_SCHEDULE = {
+#     'update-driver-status-every-3-mins': {
+#         'task': 'logistics.tasks.update_driver_status',
+#         'schedule': crontab(minute='*/3'),  # every 3 minutes
+#     },
+# }
+CELERY_BEAT_SCHEDULE = {
+    'update-driver-status-every-3-mins': {
+        'task': 'logistics.tasks.update_driver_status',
+        'schedule': timedelta(minutes=3),  # runs every 3 minutes
+        'args': (),  # optional arguments
+    },
+}
+CELERY_RESULT_EXPIRES = 60  # seconds, e.g., 1 hour
+
+AFRICASTALKING_USERNAME = os.getenv("AFRICASTALKING_USERNAME")
+AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")
+print("AT USERNAME:", AFRICASTALKING_USERNAME)
+print("AT API KEY:", AFRICASTALKING_API_KEY)

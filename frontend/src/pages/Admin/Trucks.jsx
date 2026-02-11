@@ -22,18 +22,29 @@ function Trucks() {
     handleEditTruck,
   } = useContext(AdminContext);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("all"); // all, assigned, not assigned
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const role = localStorage.getItem("role");
 
   const filterTrucks = useMemo(() => {
-    return trucks.filter(
-      (truck) =>
-        truck.truck_no?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        truck.type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        truck.driver_info?.name
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase()),
-    );
-  }, [searchQuery, trucks]);
+    return trucks
+      .filter(
+        (truck) =>
+          truck.truck_no?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          truck.type?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          truck.driver_info?.name
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()),
+      )
+      .filter((truck) => {
+        if (filter == "assigned") {
+          return truck.driver_info && truck.driver_info.name;
+        } else if (filter == "unassigned") {
+          return !truck.driver_info || !truck.driver_info.name;
+        }
+        return true;
+      });
+  }, [searchQuery, trucks,filter]);
   return (
     <>
       <div>
@@ -66,10 +77,61 @@ function Trucks() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+        {/* Filter Navbar */}
+        <div
+          style={{
+            display: "flex",
+
+            gap: "30px",
+            marginBottom: "25px",
+            borderBottom: "2px solid #e0e0e0", // bottom line for navbar
+            paddingBottom: "10px",
+          }}
+        >{role === "admin" ? (
+          <>
+            {["all", "assigned", "unassigned"].map((type) => (
+              <div
+                key={type}
+                onClick={() => setFilter(type)}
+                style={{
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  paddingBottom: "5px",
+                  color: filter === type ? "#1a839a" : "#555",
+                  borderBottom:
+                    filter === type
+                      ? "3px solid #1a839a"
+                      : "3px solid transparent",
+                  transition: "0.3s",
+                }}
+              >
+                {type === "all"
+                  ? "All"
+                  : type === "assigned"
+                    ? "Driver assigned"
+                    : "Driver Unassigned"}
+              </div>
+            ))}
+            <div className="col text-end">
+              <button
+                className="btn btn-outline-primary"
+                onClick={() =>
+                  (window.location.href = `${API_BASE_URL}/api/trucks/download_csv/`)
+                }
+              >
+                Download CSV
+              </button>
+            </div>
+          </>
+        ) : (
+          <h4>My Truck</h4>
+        )}
+        </div>
         <div className="table-responsive">
           <table className="table table-bordered">
             <thead>
               <tr>
+                <th>id</th>
                 <th>Truck No</th>
                 <th>Type</th>
                 <th>Driver</th>
@@ -81,8 +143,9 @@ function Trucks() {
             </thead>
             <tbody>
               {filterTrucks.length > 0 ? (
-                filterTrucks.map((truck) => (
+                filterTrucks.map((truck, index) => (
                   <tr key={truck.id}>
+                    <td>{index + 1}</td>
                     <td>{truck.truck_no}</td>
                     <td>{truck.type}</td>
                     <td>
@@ -114,7 +177,12 @@ function Trucks() {
                         <MdModeEdit />
                       </button>
 
-                      <button className="btn btn-danger" onClick={()=>{handleDeleteTruck(truck.id)}}>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => {
+                          handleDeleteTruck(truck.id);
+                        }}
+                      >
                         <MdDelete />
                       </button>
                     </td>
@@ -122,7 +190,7 @@ function Trucks() {
                 ))
               ) : (
                 <tr>
-                  <td className="text-center" colSpan={7}>
+                  <td className="text-center" colSpan={8}>
                     No Trucks available
                   </td>
                 </tr>

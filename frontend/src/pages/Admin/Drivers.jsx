@@ -1,6 +1,7 @@
 import React, { useContext, useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { MdModeEdit, MdDelete } from "react-icons/md";
+
 import AddDriver from "../Modals/AddDriver";
 import EditDriver from "../Modals/EditDriver";
 import { AdminContext } from "../../contexts/AdminContext";
@@ -21,17 +22,30 @@ function Drivers() {
   console.log("Drivers", drivers);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState("all");
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [searchQuery, setSearchQuery] = useState(""); // <-- Search state
 
   // Filter drivers based on search query
   const filteredDrivers = useMemo(() => {
-    return drivers.filter((driver) => {
-      const license = driver.license_no?.toLowerCase() || "";
-      const name = driver.name?.toLowerCase() || "";
-      const query = searchQuery.toLowerCase();
-      return license.includes(query) || name.includes(query);
-    });
-  }, [searchQuery, drivers]);
+    return drivers
+      .filter((driver) => {
+        const license = driver.license_no?.toLowerCase() || "";
+        const name = driver.name?.toLowerCase() || "";
+        const query = searchQuery.toLowerCase();
+        return license.includes(query) || name.includes(query);
+      })
+      .filter((driver) => {
+        if (filter === "onLeave") {
+          return driver.status === "onLeave";
+        } else if (filter === "available") {
+          return driver.status === "isAvailable";
+        } else if (filter === "onduty") {
+          return driver.status === "onDuty";
+        }
+        return true;
+      });
+  }, [searchQuery, drivers, filter]);
 
   // Pagination logic
   const driversPerPage = 6;
@@ -81,12 +95,60 @@ function Drivers() {
             }}
           />
         </div>
+        {/* Filter Navbar */}
+        <div
+          style={{
+            display: "flex",
+
+            gap: "30px",
+            marginBottom: "25px",
+            borderBottom: "2px solid #e0e0e0", // bottom line for navbar
+            paddingBottom: "10px",
+          }}
+        >
+          {["all", "onLeave", "available", "onduty"].map((type) => (
+            <div
+              key={type}
+              onClick={() => setFilter(type)}
+              style={{
+                cursor: "pointer",
+                fontWeight: "600",
+                paddingBottom: "5px",
+                color: filter === type ? "#1a839a" : "#555",
+                borderBottom:
+                  filter === type
+                    ? "3px solid #1a839a"
+                    : "3px solid transparent",
+                transition: "0.3s",
+              }}
+            >
+              {type === "all"
+                ? "All"
+                : type === "onLeave"
+                  ? "On Leave"
+                  : type === "onduty"
+                    ? "On Duty"
+                    : "Available"}
+            </div>
+          ))}
+          <div className="col text-end">
+            <button
+              className="btn btn-outline-primary"
+              onClick={() =>
+                (window.location.href = `${API_BASE_URL}/api/drivers/download_csv/`)
+              }
+            >
+              Download CSV
+            </button>
+          </div>
+        </div>
 
         {/* Table */}
         <div className="table-responsive">
           <table className="table table-bordered mx-2">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>License No</th>
                 <th>Name</th>
                 <th>Phone</th>
@@ -99,8 +161,9 @@ function Drivers() {
             </thead>
             <tbody>
               {currentDrivers.length > 0 ? (
-                currentDrivers.map((driver) => (
+                currentDrivers.map((driver, index) => (
                   <tr key={driver.id}>
+                    <td>{index + 1}</td>
                     <td>{driver.license_no}</td>
                     <td>{driver.name}</td>
                     <td>{driver.phone}</td>
@@ -136,7 +199,7 @@ function Drivers() {
                 ))
               ) : (
                 <tr>
-                  <td className="text-center" colSpan={7}>
+                  <td className="text-center" colSpan={9}>
                     No matching drivers found
                   </td>
                 </tr>
