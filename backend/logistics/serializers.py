@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Driver, Truck, Journey, Party,User
+from rest_framework.exceptions import PermissionDenied
+
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -96,12 +98,32 @@ class PartySerializer(serializers.ModelSerializer):
         model = Party
         fields = '__all__'
 class JourneySerializer(serializers.ModelSerializer):
-    driver_info = DriverSerializer(source = 'driver', read_only = True)
-    party_info = PartySerializer(source = 'party', read_only = True)
-    truck_info = TruckSerializer(source = 'truck',read_only = True)
+    driver_info = DriverSerializer(source='driver', read_only=True)
+    party_info = PartySerializer(source='party', read_only=True)
+    truck_info = TruckSerializer(source='truck', read_only=True)
+
     class Meta:
         model = Journey
         fields = '__all__'
+
+    def update(self, instance, validated_data):
+        request = self.context.get("request")
+        user = request.user
+
+        # If user is driver → only allow status update
+        if user.role == "driver":
+            # Only update status
+            instance.status = validated_data.get("status", instance.status)
+            instance.save()
+            return instance
+
+        # If admin → allow full update
+        elif user.role == "admin":
+            return super().update(instance, validated_data)
+
+        # If other roles → deny
+        raise PermissionDenied("You are not allowed to update this journey.")
+
 # serializers.py
 class JourneyStatusSerializer(serializers.ModelSerializer):
     class Meta:

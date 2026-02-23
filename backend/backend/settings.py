@@ -23,16 +23,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    'logistics',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'logistics',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +62,15 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+}
+# Redis (production recommended)
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
 
 
@@ -169,5 +181,6 @@ CELERY_RESULT_EXPIRES = 60  # seconds, e.g., 1 hour
 
 AFRICASTALKING_USERNAME = os.getenv("AFRICASTALKING_USERNAME")
 AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")
-print("AT USERNAME:", AFRICASTALKING_USERNAME)
-print("AT API KEY:", AFRICASTALKING_API_KEY)
+
+# daphne
+ASGI_APPLICATION = "backend.asgi.application"

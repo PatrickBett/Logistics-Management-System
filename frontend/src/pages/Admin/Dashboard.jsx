@@ -7,6 +7,7 @@ import {
   FaRoute,
   FaMoneyBillWave,
 } from "react-icons/fa";
+import { motion } from "framer-motion"; // animation library
 import TripsChart from "../../charts/TripsChart";
 
 function Dashboard() {
@@ -19,7 +20,15 @@ function Dashboard() {
     totalweighttransported,
   } = useContext(AdminContext);
 
-  
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+  const rowVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+  };
 
   return (
     <div className="container-fluid px-3">
@@ -52,7 +61,14 @@ function Dashboard() {
             value: journeys.length,
           },
         ].map((card, idx) => (
-          <div className="col-12 col-sm-6 col-md-3" key={idx}>
+          <motion.div
+            className="col-12 col-sm-6 col-md-3"
+            key={idx}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: idx * 0.2, duration: 0.5 }}
+          >
             <div className="card shadow-sm border-0 h-100">
               <div className="card-body text-center">
                 {card.icon}
@@ -60,7 +76,7 @@ function Dashboard() {
                 <div className="fs-3 fw-bold">{card.value}</div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -92,7 +108,14 @@ function Dashboard() {
                     value: `${totalweighttransported} Kgs`,
                   },
                 ].map((stat, idx) => (
-                  <div className="col-sm-6" key={idx}>
+                  <motion.div
+                    className="col-sm-6"
+                    key={idx}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: idx * 0.2, duration: 0.5 }}
+                  >
                     <div className="card shadow-sm border-0 h-100">
                       <div className="card-body text-center">
                         {stat.icon}
@@ -100,7 +123,7 @@ function Dashboard() {
                         <div className="fs-4 fw-bold">{stat.value}</div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
@@ -122,23 +145,31 @@ function Dashboard() {
                       .filter(
                         (p) => Number(p.voltransported) > Number(p.total_vol),
                       )
-                      .map((party, index) => {
+                      .map((party, idx) => {
                         const diff =
                           Number(party.voltransported) -
                           Number(party.total_vol);
                         return (
-                          <tr
+                          <motion.tr
                             key={party.id}
+                            variants={rowVariants}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{ delay: idx * 0.1 }}
+                            whileHover={{
+                              scale: 1.02,
+                              backgroundColor: "#ffe6e6",
+                            }}
                             className="fw-medium"
                             style={{
                               backgroundColor:
                                 diff > 0 ? "#ffcccc" : "transparent",
                             }}
                           >
-                            <td>{index + 1}</td>
+                            <td>{idx + 1}</td>
                             <td>{party.name}</td>
                             <td>{diff} kgs</td>
-                          </tr>
+                          </motion.tr>
                         );
                       })}
                     {parties.filter(
@@ -181,7 +212,17 @@ function Dashboard() {
                     drivers
                       .filter((d) => d.status === "onLeave")
                       .map((driver, idx) => (
-                        <tr key={driver.id}>
+                        <motion.tr
+                          key={driver.id}
+                          variants={rowVariants}
+                          initial="hidden"
+                          animate="visible"
+                          transition={{ delay: idx * 0.1 }}
+                          whileHover={{
+                            scale: 1.02,
+                            backgroundColor: "#e6f7ff",
+                          }}
+                        >
                           <td>{idx + 1}</td>
                           <td className="fw-medium">{driver.name}</td>
                           <td>{driver.license_no}</td>
@@ -196,7 +237,7 @@ function Dashboard() {
                               ? driver.return_date.slice(0, 16)
                               : "—"}
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))
                   ) : (
                     <tr>

@@ -5,6 +5,10 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
 from utils.africastalking import send_sms
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
 # Create your models here.
 
 class User(AbstractUser):
@@ -50,7 +54,7 @@ class Driver(models.Model):
         # If driver goes on leave for the first time
         if self.status == 'onLeave' and not self.leave_date:
             self.leave_date = now
-            self.return_date = now + timedelta(minutes=5)
+            self.return_date = now + timedelta(days=5)
             print("Leave automated", self.return_date) 
         # If leave time has expired
         if self.return_date and self.return_date <= now:
@@ -112,6 +116,15 @@ class Truck(models.Model):
 
     def __str__(self):
         return self.truck_no
+    
+class Notifications(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification for {self.user.username} at {self.created_at}"
 class Journey(models.Model):
     ACTION_CHOICES =(
         ('cancelled', 'Cancelled'),
@@ -138,6 +151,24 @@ class Journey(models.Model):
             return self.status
         if old_status not in ["inprogress", "shipping"] and self.status == 'inprogress':
             self.driver.incomplete_trips += 1
+            
+            message = (
+                f"New trip assigned: {self.weight}kg for {self.party.name} "
+                f"from {self.startingpoint} to {self.destination} on {self.date}"
+           )
+            notification = Notifications.objects.create(user=self.driver.user, message=message)
+            
+            #send Websocket event
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"user_{self.driver.user.id}",
+                {
+                    "type": "send_notification",
+                    "id": str(notification.id),
+                    "message": notification.message,
+                    "created_at": notification.created_at.isoformat(),
+                }
+            )
             send_sms(self.driver.phone, f"Hello {self.driver.name}, you have been assigned a new {self.weight} trip for {self.party.name} from {self.startingpoint} to {self.destination} on {self.date}. Please prepare for the trip.")
         elif old_status not in ["inprogress", "shipping"] and self.status == 'shipping':
             self.driver.incomplete_trips += 1

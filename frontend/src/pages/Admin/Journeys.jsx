@@ -214,7 +214,7 @@ function Journeys() {
               ) : (
                 <tr>
                   <td
-                    colSpan={role === "admin" ? 9 : 10}
+                    colSpan={role === "admin" ? 10 : 10}
                     className="text-center"
                   >
                     No Journeys Found

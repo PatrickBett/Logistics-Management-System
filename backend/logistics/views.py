@@ -8,7 +8,7 @@ from .serializers import (DriverSerializer, UserSerializer,DriverRegisterSeriali
                         RegisterSerializer,CustomTokenObtainPairSerializer)
 
 import csv
-from .permissions import isDriver
+from .permissions import isDriver, isAdmin
 from django.http import HttpResponse
 
 # Create your views here.
@@ -72,7 +72,7 @@ class JourneyListCreateView(generics.ListCreateAPIView):
                 return Journey.objects.none()
 
         return Journey.objects.none()    
-
+# Admin permission to edit all journeys, drivers can only edit their own journeys
 class JourneyRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Journey.objects.all()
     serializer_class = JourneySerializer
@@ -132,3 +132,6 @@ class JourneyUpdateStatusView(generics.UpdateAPIView):
             except Driver.DoesNotExist:
                 return Journey.objects.none()
         return Journey.objects.none()
+
+def home(request):
+    return HttpResponse("Logistics Management API")

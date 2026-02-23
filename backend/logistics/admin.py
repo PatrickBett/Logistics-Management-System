@@ -1,10 +1,13 @@
 from django.contrib import admin
-from .models import Driver, Truck, Journey, Party, User
+from .models import Driver, Truck, Journey, Party, User, Notifications
 # Register your models here.
 
 admin.site.register(User)
 admin.site.register(Journey)
 admin.site.register(Party)
+@admin.register(Notifications)
+class NotificationsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'message', 'created_at')
 @admin.register(Driver)
 class DriverAdmin(admin.ModelAdmin):
     list_display = ('name', 'license_no', 'status')

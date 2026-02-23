@@ -32,5 +32,6 @@ urlpatterns = [
     path('drivers/download_csv/', download_drivers_csv_view, name='download-drivers-csv'),
     path('trucks/download_csv/', download_trucks_csv_view, name='download-trucks-csv'),
     path('journeys/download_csv/', download_journeys_csv_view, name='download-journeys-csv'),
-    path('parties/download_csv/', download_parties_csv_view, name='download-parties-csv')
+    path('parties/download_csv/', download_parties_csv_view, name='download-parties-csv'),
+    
 ]

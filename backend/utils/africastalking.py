@@ -16,7 +16,7 @@ def send_sms(to, message):
     'to' must be a string with E.164 format, e.g., '+254791454535'
     """
     try:
-        response = sms.send(message, [to])
+        response = sms.send(message, [to],)
         recipients = response.get("SMSMessageData", {}).get("Recipients", [])
 
         for recipient in recipients:
