@@ -132,6 +132,45 @@ class JourneyUpdateStatusView(generics.UpdateAPIView):
             except Driver.DoesNotExist:
                 return Journey.objects.none()
         return Journey.objects.none()
-
 def home(request):
-    return HttpResponse("Logistics Management API")
+    return HttpResponse("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Logistics Management API</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #0f172a;
+                color: white;
+                text-align: center;
+                padding-top: 100px;
+            }
+            h1 {
+                color: #38bdf8;
+                font-size: 40px;
+            }
+            p {
+                color: #94a3b8;
+            }
+            a {
+                display: inline-block;
+                margin-top: 20px;
+                padding: 10px 20px;
+                background: #2563eb;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+            }
+            a:hover {
+                background: #1d4ed8;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Logistics Management API</h1>
+        <p>Status: Running</p>
+        <a href="/docs/">View API Documentation</a>
+    </body>
+    </html>
+    """)

@@ -54,13 +54,14 @@ class Driver(models.Model):
         # If driver goes on leave for the first time
         if self.status == 'onLeave' and not self.leave_date:
             self.leave_date = now
-            self.return_date = now + timedelta(days=5)
-            print("Leave automated", self.return_date) 
+            self.return_date = now + timedelta(minutes=2)
+            
         # If leave time has expired
-        if self.return_date and self.return_date <= now:
-                self.status = 'isAvailable'
-                self.leave_date = None
-                self.return_date = None
+        # if self.return_date and self.return_date <= now:
+        #         self.status = 'isAvailable'
+        #         self.leave_date = None
+        #         self.return_date = None
+        
         # If driver has trips
         if self.incomplete_trips >0:
             self.status = 'onDuty'

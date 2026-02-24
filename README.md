@@ -21,7 +21,7 @@ Drivers can register on the site only after added by the admin as one of the com
 
 1. Frontend: React, Bootstrap, CSS, Rechart, Context API
 
-2. Backend: Django, Django REST Framework
+2. Backend: Django, Django REST Framework, Redis, Celery
 
 3. Notification: Africastalking API
 
