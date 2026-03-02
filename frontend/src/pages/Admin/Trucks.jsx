@@ -1,5 +1,11 @@
 import React, { useMemo, useContext, useState } from "react";
-import { FaPlus, FaSearch, FaFileCsv } from "react-icons/fa";
+import {
+  FaPlus,
+  FaSearch,
+  FaFileCsv,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { MdModeEdit, MdDelete, MdLocalShipping } from "react-icons/md";
 import { AdminContext } from "../../contexts/AdminContext";
 import AddTruck from "../Modals/AddTruck";
@@ -17,6 +23,9 @@ function Trucks() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const role = localStorage.getItem("role");
 
@@ -27,16 +36,8 @@ function Trucks() {
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },
-    headerText: {
-      color: "#2B3674",
-      fontWeight: "700",
-      fontSize: "1.75rem",
-    },
-    searchWrapper: {
-      position: "relative",
-      maxWidth: "450px",
-      width: "100%",
-    },
+    headerText: { color: "#2B3674", fontWeight: "700", fontSize: "1.75rem" },
+    searchWrapper: { position: "relative", maxWidth: "450px", width: "100%" },
     searchInput: {
       borderRadius: "30px",
       paddingLeft: "45px",
@@ -91,9 +92,23 @@ function Trucks() {
       color: type === "edit" ? "#4318FF" : "#EE5D50",
       transition: "all 0.2s",
     }),
+    pageBtn: (isActive) => ({
+      borderRadius: "8px",
+      backgroundColor: isActive ? "#4318FF" : "#fff",
+      color: isActive ? "#fff" : "#2B3674",
+      border: "none",
+      width: "35px",
+      height: "35px",
+      fontWeight: "600",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.05)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }),
   };
 
-  const filterTrucks = useMemo(() => {
+  // --- FILTER & SEARCH LOGIC ---
+  const filteredTrucks = useMemo(() => {
     return trucks
       .filter((truck) => {
         const query = searchQuery.toLowerCase();
@@ -111,6 +126,18 @@ function Trucks() {
         return true;
       });
   }, [searchQuery, trucks, filter]);
+
+  // --- PAGINATION CALCULATIONS ---
+  const totalPages = Math.ceil(filteredTrucks.length / itemsPerPage);
+  const currentTrucks = filteredTrucks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div style={styles.container}>
@@ -149,7 +176,10 @@ function Trucks() {
             style={styles.searchInput}
             placeholder="Search by No, Type, or Driver..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1); // Reset to page 1 on search
+            }}
           />
         </div>
 
@@ -159,7 +189,10 @@ function Trucks() {
               {["all", "assigned", "unassigned"].map((type) => (
                 <div
                   key={type}
-                  onClick={() => setFilter(type)}
+                  onClick={() => {
+                    setFilter(type);
+                    setCurrentPage(1); // Reset to page 1 on filter
+                  }}
                   style={styles.tab(filter === type)}
                 >
                   {type === "all"
@@ -211,8 +244,8 @@ function Trucks() {
               </tr>
             </thead>
             <tbody>
-              {filterTrucks.length > 0 ? (
-                filterTrucks.map((truck) => (
+              {currentTrucks.length > 0 ? (
+                currentTrucks.map((truck) => (
                   <tr
                     key={truck.id}
                     style={{ borderBottom: "1px solid #F4F7FE" }}
@@ -295,6 +328,48 @@ function Trucks() {
             </tbody>
           </table>
         </div>
+
+        {/* --- PAGINATION CONTROLS --- */}
+        {totalPages > 1 && (
+          <div
+            className="d-flex justify-content-between align-items-center mt-4 pt-3"
+            style={{ borderTop: "1px solid #F4F7FE" }}
+          >
+            <div className="text-muted small fw-bold">
+              Showing {currentTrucks.length} of {filteredTrucks.length} trucks
+            </div>
+
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-light shadow-sm"
+                style={styles.pageBtn(false)}
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                <FaChevronLeft size={12} />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => (
+                <button
+                  key={idx}
+                  style={styles.pageBtn(currentPage === idx + 1)}
+                  onClick={() => handlePageChange(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-light shadow-sm"
+                style={styles.pageBtn(false)}
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                <FaChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <AddTruck drivers={drivers} />

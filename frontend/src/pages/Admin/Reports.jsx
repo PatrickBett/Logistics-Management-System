@@ -10,7 +10,6 @@ import { MdInsertChartOutlined, MdFileDownload } from "react-icons/md";
 function Reports() {
   const { drivers, journeys } = useContext(AdminContext);
 
-  // --- CUSTOM STYLES ---
   const styles = {
     container: {
       padding: "1.5rem",
@@ -29,8 +28,14 @@ function Reports() {
       padding: "1.5rem",
       boxShadow: "0px 20px 40px rgba(0, 0, 0, 0.02)",
       border: "none",
-      height: "100%", // Ensures cards in the same row are equal height
-      marginBottom: "1.5rem",
+      height: "100%", // Forces card to fill column height
+      display: "flex",
+      flexDirection: "column",
+    },
+    chartWrapper: {
+      flex: 1, // Takes up all remaining space in the card
+      minHeight: "300px", // Sets a uniform height for all charts
+      position: "relative",
     },
     cardTitle: {
       color: "#2B3674",
@@ -62,9 +67,7 @@ function Reports() {
       <div className="d-flex justify-content-between align-items-end mb-4">
         <div>
           <h2 style={styles.headerText}>Analytics Dashboard</h2>
-          <p className="text-muted small mb-0">
-            Real-time performance metrics and logistics overview
-          </p>
+          <p className="text-muted small mb-0">Real-time performance metrics</p>
         </div>
         <button style={styles.exportBtn} onClick={() => window.print()}>
           <MdFileDownload size={18} /> Export Report
@@ -76,10 +79,10 @@ function Reports() {
         <KpiCards drivers={drivers} journeys={journeys} />
       </div>
 
-      {/* Top Row: Driver Performance & Revenue */}
-      <div className="row">
-        <div className="col-lg-7 col-md-12">
-          <div style={styles.chartCard}>
+      {/* Row 1: Performance & Revenue */}
+      <div className="row g-4 mb-4">
+        <div className="col-lg-7 d-flex">
+          <div style={styles.chartCard} className="w-100">
             <div style={styles.cardTitle}>
               <div
                 style={{
@@ -93,12 +96,14 @@ function Reports() {
               </div>
               Top Performing Drivers
             </div>
-            <TopDriversChart drivers={drivers} journeys={journeys} />
+            <div style={styles.chartWrapper}>
+              <TopDriversChart drivers={drivers} journeys={journeys} />
+            </div>
           </div>
         </div>
 
-        <div className="col-lg-5 col-md-12">
-          <div style={styles.chartCard}>
+        <div className="col-lg-5 d-flex">
+          <div style={styles.chartCard} className="w-100">
             <div style={styles.cardTitle}>
               <div
                 style={{
@@ -112,15 +117,17 @@ function Reports() {
               </div>
               Revenue Analysis
             </div>
-            <MonthlyAvgRevenueChart drivers={drivers} journeys={journeys} />
+            <div style={styles.chartWrapper}>
+              <MonthlyAvgRevenueChart drivers={drivers} journeys={journeys} />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Row: Trip Volume & Delivery Status */}
-      <div className="row">
-        <div className="col-lg-8 col-md-12">
-          <div style={styles.chartCard}>
+      {/* Row 2: Volume & Status */}
+      <div className="row g-4">
+        <div className="col-lg-8 d-flex">
+          <div style={styles.chartCard} className="w-100">
             <div style={styles.cardTitle}>
               <div
                 style={{
@@ -134,12 +141,14 @@ function Reports() {
               </div>
               Monthly Trip Volume
             </div>
-            <MonthlyTripsChart journeys={journeys} />
+            <div style={styles.chartWrapper}>
+              <MonthlyTripsChart journeys={journeys} />
+            </div>
           </div>
         </div>
 
-        <div className="col-lg-4 col-md-12">
-          <div style={styles.chartCard}>
+        <div className="col-lg-4 d-flex">
+          <div style={styles.chartCard} className="w-100">
             <div style={styles.cardTitle}>
               <div
                 style={{
@@ -153,7 +162,9 @@ function Reports() {
               </div>
               Delivery Status
             </div>
-            <StatusPieChart journeys={journeys} />
+            <div style={styles.chartWrapper}>
+              <StatusPieChart journeys={journeys} />
+            </div>
           </div>
         </div>
       </div>

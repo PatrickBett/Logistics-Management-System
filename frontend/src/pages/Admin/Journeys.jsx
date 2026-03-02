@@ -1,6 +1,13 @@
 import React, { useContext, useMemo, useState } from "react";
-import { FaPlus, FaSearch, FaFileDownload, FaRoute } from "react-icons/fa";
-import { MdModeEdit, MdDelete, MdLocationOn } from "react-icons/md";
+import {
+  FaPlus,
+  FaSearch,
+  FaFileDownload,
+  FaRoute,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+import { MdModeEdit, MdDelete } from "react-icons/md";
 import { AdminContext } from "../../contexts/AdminContext";
 import AddJourney from "../Modals/AddJourney";
 import EditJourney from "../Modals/EditJourney";
@@ -17,25 +24,21 @@ function Journeys() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
+
+  // --- PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // Adjust this number as needed
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  // --- CUSTOM STYLES ---
   const styles = {
     container: {
       padding: "1.5rem",
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },
-    headerText: {
-      color: "#2B3674",
-      fontWeight: "700",
-      fontSize: "1.75rem",
-    },
-    searchWrapper: {
-      position: "relative",
-      maxWidth: "400px",
-      width: "100%",
-    },
+    headerText: { color: "#2B3674", fontWeight: "700", fontSize: "1.75rem" },
+    searchWrapper: { position: "relative", maxWidth: "400px", width: "100%" },
     searchInput: {
       borderRadius: "30px",
       paddingLeft: "45px",
@@ -77,14 +80,25 @@ function Journeys() {
         textTransform: "capitalize",
       };
     },
-    routeText: {
-      fontSize: "0.85rem",
-      color: "#2B3674",
+    pageButton: (isActive) => ({
+      width: "35px",
+      height: "35px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "10px",
+      margin: "0 4px",
+      border: "none",
+      backgroundColor: isActive ? "#4318FF" : "transparent",
+      color: isActive ? "#fff" : "#A3AED0",
       fontWeight: "600",
-    },
+      transition: "0.2s",
+    }),
   };
 
+  // --- FILTER & SEARCH LOGIC ---
   const filteredJourneys = useMemo(() => {
+    setCurrentPage(1); // Reset to page 1 whenever filter or search changes
     const query = searchQuery.toLowerCase();
     return journeys
       .filter((j) => {
@@ -100,9 +114,20 @@ function Journeys() {
       .filter((j) => filter === "all" || j.status === filter);
   }, [journeys, searchQuery, filter]);
 
+  // --- PAGINATION CALCULATIONS ---
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredJourneys.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+  const totalPages = Math.ceil(filteredJourneys.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div style={styles.container}>
-      {/* Header */}
+      {/* Header logic same as before... */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 style={styles.headerText}>Journeys & Logistics</h2>
@@ -127,7 +152,7 @@ function Journeys() {
         )}
       </div>
 
-      {/* Search & Tabs */}
+      {/* Tabs and Search logic same as before... */}
       <div className="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
         <div style={styles.searchWrapper}>
           <FaSearch
@@ -147,36 +172,21 @@ function Journeys() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-
         <div className="d-flex align-items-center gap-2">
-          {role === "admin" ? (
-            <>
-              {["all", "inprogress", "shipping", "delivered", "cancelled"].map(
-                (type) => (
-                  <div
-                    key={type}
-                    onClick={() => setFilter(type)}
-                    style={styles.tab(filter === type)}
-                  >
-                    {type === "all"
-                      ? "All Trips"
-                      : type === "inprogress"
-                        ? "Pending"
-                        : type.charAt(0).toUpperCase() + type.slice(1)}
-                  </div>
-                ),
-              )}
-              <button
-                className="btn btn-link text-muted text-decoration-none small ms-2"
-                onClick={() =>
-                  (window.location.href = `${API_BASE_URL}/api/journeys/download_csv/`)
-                }
+          {["all", "inprogress", "shipping", "delivered", "cancelled"].map(
+            (type) => (
+              <div
+                key={type}
+                onClick={() => setFilter(type)}
+                style={styles.tab(filter === type)}
               >
-                <FaFileDownload className="me-1" /> CSV
-              </button>
-            </>
-          ) : (
-            <h4 style={styles.headerText}>Active Routes</h4>
+                {type === "all"
+                  ? "All Trips"
+                  : type === "inprogress"
+                    ? "Pending"
+                    : type.charAt(0).toUpperCase() + type.slice(1)}
+              </div>
+            ),
           )}
         </div>
       </div>
@@ -185,6 +195,7 @@ function Journeys() {
       <div style={styles.tableCard}>
         <div className="table-responsive">
           <table className="table align-middle">
+            {/* Table thead same as before... */}
             <thead>
               <tr
                 style={{
@@ -196,15 +207,14 @@ function Journeys() {
               >
                 <th className="border-0 pb-3">Trip Details</th>
                 <th className="border-0 pb-3">Driver & Truck</th>
-                <th className="border-0 pb-3">Route (Origin → Destination)</th>
-                <th className="border-0 pb-3 text-center">Load</th>
+                <th className="border-0 pb-3">Route</th>
                 <th className="border-0 pb-3 text-center">Status</th>
                 <th className="border-0 pb-3 text-end">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filteredJourneys.length > 0 ? (
-                filteredJourneys.map((journey) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((journey) => (
                   <tr
                     key={journey.id}
                     style={{ borderBottom: "1px solid #F4F7FE" }}
@@ -216,68 +226,25 @@ function Journeys() {
                       <div className="text-muted small">{journey.date}</div>
                     </td>
                     <td>
-                      <div className="d-flex flex-column">
-                        <span
-                          style={{
-                            color: "#2B3674",
-                            fontWeight: "600",
-                            fontSize: "0.9rem",
-                          }}
-                        >
-                          {journey.driver_info?.name || "N/A"}
-                        </span>
-                        <span className="text-muted small">
-                          {journey.truck_info?.truck_no || "No Truck"}
-                        </span>
+                      <div
+                        className="fw-bold"
+                        style={{ color: "#2B3674", fontSize: "0.9rem" }}
+                      >
+                        {journey.driver_info?.name || "N/A"}
+                      </div>
+                      <div className="text-muted small">
+                        {journey.truck_info?.truck_no || "No Truck"}
                       </div>
                     </td>
                     <td>
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="text-center"
-                          style={{ minWidth: "80px" }}
-                        >
-                          <div style={styles.routeText}>
-                            {journey.startingpoint}
-                          </div>
-                        </div>
-                        <div className="flex-grow-1 mx-2 text-muted d-flex align-items-center justify-content-center">
-                          <div
-                            style={{
-                              height: "2px",
-                              width: "30px",
-                              backgroundColor: "#E0E5F2",
-                            }}
-                          ></div>
-                          <FaRoute
-                            className="mx-2"
-                            size={14}
-                            style={{ color: "#A3AED0" }}
-                          />
-                          <div
-                            style={{
-                              height: "2px",
-                              width: "30px",
-                              backgroundColor: "#E0E5F2",
-                            }}
-                          ></div>
-                        </div>
-                        <div
-                          className="text-center"
-                          style={{ minWidth: "80px" }}
-                        >
-                          <div style={styles.routeText}>
-                            {journey.destination}
-                          </div>
-                        </div>
+                      <div
+                        className="d-flex align-items-center small fw-bold"
+                        style={{ color: "#2B3674" }}
+                      >
+                        {journey.startingpoint}{" "}
+                        <FaRoute className="mx-2 text-muted" />{" "}
+                        {journey.destination}
                       </div>
-                    </td>
-                    <td
-                      className="text-center fw-bold"
-                      style={{ color: "#2B3674", fontSize: "0.85rem" }}
-                    >
-                      {journey.weight}{" "}
-                      <span className="text-muted fw-normal">KG</span>
                     </td>
                     <td className="text-center">
                       <span style={styles.statusBadge(journey.status)}>
@@ -285,47 +252,75 @@ function Journeys() {
                       </span>
                     </td>
                     <td className="text-end">
-                      <div className="d-flex justify-content-end gap-2">
-                        <button
-                          className="btn btn-light"
-                          style={{
-                            backgroundColor: "#F4F7FE",
-                            color: "#4318FF",
-                            borderRadius: "10px",
-                            border: "none",
-                          }}
-                          data-bs-toggle="modal"
-                          data-bs-target="#edit-journey-modal"
-                          onClick={() => setEditingJourney(journey)}
-                        >
-                          <MdModeEdit size={18} />
-                        </button>
-                        <button
-                          className="btn btn-light"
-                          style={{
-                            backgroundColor: "#F4F7FE",
-                            color: "#EE5D50",
-                            borderRadius: "10px",
-                            border: "none",
-                          }}
-                          onClick={() => handleDeleteJourney(journey.id)}
-                        >
-                          <MdDelete size={18} />
-                        </button>
-                      </div>
+                      <button
+                        className="btn btn-sm me-2"
+                        style={{ color: "#4318FF" }}
+                        onClick={() => setEditingJourney(journey)}
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit-journey-modal"
+                      >
+                        <MdModeEdit size={18} />
+                      </button>
+                      <button
+                        className="btn btn-sm"
+                        style={{ color: "#EE5D50" }}
+                        onClick={() => handleDeleteJourney(journey.id)}
+                      >
+                        <MdDelete size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="text-center py-5 text-muted">
-                    No active journeys found.
+                  <td colSpan={5} className="text-center py-5 text-muted">
+                    No journeys found.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+
+        {/* --- PAGINATION FOOTER --- */}
+        {totalPages > 1 && (
+          <div className="d-flex justify-content-between align-items-center mt-4">
+            <div className="text-muted small">
+              Showing {indexOfFirstItem + 1} to{" "}
+              {Math.min(indexOfLastItem, filteredJourneys.length)} of{" "}
+              {filteredJourneys.length} entries
+            </div>
+            <div className="d-flex align-items-center">
+              <button
+                className="btn btn-sm"
+                disabled={currentPage === 1}
+                onClick={() => paginate(currentPage - 1)}
+                style={{ color: "#A3AED0" }}
+              >
+                <FaChevronLeft />
+              </button>
+
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => paginate(i + 1)}
+                  style={styles.pageButton(currentPage === i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-sm"
+                disabled={currentPage === totalPages}
+                onClick={() => paginate(currentPage + 1)}
+                style={{ color: "#A3AED0" }}
+              >
+                <FaChevronRight />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <AddJourney />

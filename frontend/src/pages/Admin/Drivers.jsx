@@ -1,5 +1,11 @@
 import React, { useContext, useMemo, useState } from "react";
-import { FaPlus, FaSearch, FaDownload } from "react-icons/fa";
+import {
+  FaPlus,
+  FaSearch,
+  FaDownload,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { MdModeEdit, MdDelete } from "react-icons/md";
 import AddDriver from "../Modals/AddDriver";
 import EditDriver from "../Modals/EditDriver";
@@ -27,16 +33,8 @@ function Drivers() {
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },
-    headerText: {
-      color: "#2B3674",
-      fontWeight: "700",
-      fontSize: "1.75rem",
-    },
-    searchWrapper: {
-      position: "relative",
-      flex: "1",
-      maxWidth: "400px",
-    },
+    headerText: { color: "#2B3674", fontWeight: "700", fontSize: "1.75rem" },
+    searchWrapper: { position: "relative", flex: "1", maxWidth: "400px" },
     searchInput: {
       borderRadius: "30px",
       paddingLeft: "40px",
@@ -89,10 +87,20 @@ function Drivers() {
       alignItems: "center",
       justifyContent: "center",
       border: "none",
-      transition: "transform 0.2s",
     },
+    pageBtn: (isActive) => ({
+      borderRadius: "8px",
+      backgroundColor: isActive ? "#4318FF" : "#fff",
+      color: isActive ? "#fff" : "#2B3674",
+      border: "none",
+      width: "35px",
+      height: "35px",
+      fontWeight: "600",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.05)",
+    }),
   };
 
+  // --- FILTER LOGIC (Resets page to 1 on change) ---
   const filteredDrivers = useMemo(() => {
     return drivers
       .filter((driver) => {
@@ -110,12 +118,18 @@ function Drivers() {
       });
   }, [searchQuery, drivers, filter]);
 
+  // --- PAGINATION CALCULATIONS ---
   const driversPerPage = 6;
   const totalPages = Math.ceil(filteredDrivers.length / driversPerPage);
   const currentDrivers = filteredDrivers.slice(
     (currentPage - 1) * driversPerPage,
     currentPage * driversPerPage,
   );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div style={styles.container}>
@@ -148,7 +162,7 @@ function Drivers() {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1);
+              setCurrentPage(1); // Reset page on search
             }}
           />
         </div>
@@ -157,11 +171,16 @@ function Drivers() {
           {["all", "onLeave", "available", "onduty"].map((type) => (
             <div
               key={type}
-              onClick={() => setFilter(type)}
+              onClick={() => {
+                setFilter(type);
+                setCurrentPage(1);
+              }}
               style={styles.tab(filter === type)}
             >
-              {type.charAt(0).toUpperCase() +
-                type.slice(1).replace("onduty", "On Duty")}
+              {type === "all"
+                ? "All"
+                : type.charAt(0).toUpperCase() +
+                  type.slice(1).replace("onduty", "On Duty")}
             </div>
           ))}
         </div>
@@ -260,7 +279,7 @@ function Drivers() {
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center py-5 text-muted">
-                    No drivers found matching your criteria.
+                    No drivers found.
                   </td>
                 </tr>
               )}
@@ -268,39 +287,46 @@ function Drivers() {
           </table>
         </div>
 
-        {/* Improved Pagination */}
+        {/* --- PAGINATION CONTROLS --- */}
         {totalPages > 1 && (
-          <div className="d-flex justify-content-between align-items-center mt-4">
-            <div className="text-muted small">
+          <div
+            className="d-flex justify-content-between align-items-center mt-4 pt-3"
+            style={{ borderTop: "1px solid #F4F7FE" }}
+          >
+            <div className="text-muted small fw-bold">
               Showing {currentDrivers.length} of {filteredDrivers.length}{" "}
               drivers
             </div>
-            <nav>
-              <ul className="pagination mb-0 gap-1">
-                {[...Array(totalPages)].map((_, idx) => (
-                  <li
-                    key={idx}
-                    className={`page-item ${currentPage === idx + 1 ? "active" : ""}`}
-                  >
-                    <button
-                      className="page-link border-0 shadow-sm"
-                      style={{
-                        borderRadius: "8px",
-                        backgroundColor:
-                          currentPage === idx + 1 ? "#4318FF" : "#fff",
-                        color: currentPage === idx + 1 ? "#fff" : "#2B3674",
-                      }}
-                      onClick={() => {
-                        setCurrentPage(idx + 1);
-                        window.scrollTo(0, 0);
-                      }}
-                    >
-                      {idx + 1}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-light shadow-sm"
+                style={styles.pageBtn(false)}
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                <FaChevronLeft size={12} />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => (
+                <button
+                  key={idx}
+                  style={styles.pageBtn(currentPage === idx + 1)}
+                  onClick={() => handlePageChange(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-light shadow-sm"
+                style={styles.pageBtn(false)}
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                <FaChevronRight size={12} />
+              </button>
+            </div>
           </div>
         )}
       </div>

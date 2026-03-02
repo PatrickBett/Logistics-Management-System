@@ -5,6 +5,8 @@ import {
   FaFileDownload,
   FaUserShield,
   FaPhoneAlt,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
 import { MdModeEdit, MdDelete, MdBusinessCenter } from "react-icons/md";
@@ -23,6 +25,9 @@ function Parties() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1); // Pagination state
+  const itemsPerPage = 6;
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // --- CUSTOM STYLES ---
@@ -32,16 +37,8 @@ function Parties() {
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },
-    headerText: {
-      color: "#2B3674",
-      fontWeight: "700",
-      fontSize: "1.75rem",
-    },
-    searchWrapper: {
-      position: "relative",
-      maxWidth: "400px",
-      width: "100%",
-    },
+    headerText: { color: "#2B3674", fontWeight: "700", fontSize: "1.75rem" },
+    searchWrapper: { position: "relative", maxWidth: "400px", width: "100%" },
     searchInput: {
       borderRadius: "30px",
       paddingLeft: "45px",
@@ -72,13 +69,23 @@ function Parties() {
       fontSize: "0.75rem",
       fontWeight: "700",
     }),
-    priceText: {
-      color: "#2B3674",
-      fontWeight: "700",
-      fontSize: "0.95rem",
-    },
+    priceText: { color: "#2B3674", fontWeight: "700", fontSize: "0.95rem" },
+    pageBtn: (isActive) => ({
+      borderRadius: "8px",
+      backgroundColor: isActive ? "#4318FF" : "#fff",
+      color: isActive ? "#fff" : "#2B3674",
+      border: "none",
+      width: "35px",
+      height: "35px",
+      fontWeight: "600",
+      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.05)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }),
   };
 
+  // --- FILTER & SEARCH LOGIC ---
   const filteredParties = useMemo(() => {
     return parties
       .filter((p) => {
@@ -94,6 +101,18 @@ function Parties() {
         return true;
       });
   }, [searchQuery, parties, filter]);
+
+  // --- PAGINATION CALCULATIONS ---
+  const totalPages = Math.ceil(filteredParties.length / itemsPerPage);
+  const currentParties = filteredParties.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div style={styles.container}>
@@ -137,7 +156,10 @@ function Parties() {
             style={styles.searchInput}
             placeholder="Search by client or contact..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1); // Reset to page 1 on search
+            }}
           />
         </div>
 
@@ -145,7 +167,10 @@ function Parties() {
           {["all", "isactive", "isnotactive"].map((type) => (
             <div
               key={type}
-              onClick={() => setFilter(type)}
+              onClick={() => {
+                setFilter(type);
+                setCurrentPage(1); // Reset to page 1 on filter change
+              }}
               style={styles.tab(filter === type)}
             >
               {type === "all"
@@ -187,8 +212,8 @@ function Parties() {
               </tr>
             </thead>
             <tbody>
-              {filteredParties.length > 0 ? (
-                filteredParties.map((party) => (
+              {currentParties.length > 0 ? (
+                currentParties.map((party) => (
                   <tr
                     key={party.id}
                     style={{ borderBottom: "1px solid #F4F7FE" }}
@@ -313,6 +338,49 @@ function Parties() {
             </tbody>
           </table>
         </div>
+
+        {/* --- PAGINATION CONTROLS --- */}
+        {totalPages > 1 && (
+          <div
+            className="d-flex justify-content-between align-items-center mt-4 pt-3"
+            style={{ borderTop: "1px solid #F4F7FE" }}
+          >
+            <div className="text-muted small fw-bold">
+              Showing {currentParties.length} of {filteredParties.length}{" "}
+              clients
+            </div>
+
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-light shadow-sm"
+                style={styles.pageBtn(false)}
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                <FaChevronLeft size={12} />
+              </button>
+
+              {[...Array(totalPages)].map((_, idx) => (
+                <button
+                  key={idx}
+                  style={styles.pageBtn(currentPage === idx + 1)}
+                  onClick={() => handlePageChange(idx + 1)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-light shadow-sm"
+                style={styles.pageBtn(false)}
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                <FaChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <AddPartyModal />
