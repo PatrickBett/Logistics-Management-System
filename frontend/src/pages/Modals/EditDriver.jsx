@@ -1,97 +1,96 @@
 import React, { useState, useEffect } from "react";
-import {
-  MdEdit,
-  MdBadge,
-  MdPhone,
-  MdEmail,
-  MdEventAvailable,
-  MdHistory,
-} from "react-icons/md";
 
 function EditDriver({ driver, handleEdit }) {
-  const [formData, setFormData] = useState({
-    license_no: "",
-    name: "",
-    phone: "",
-    email: "",
-    trips: 0,
-    incomplete_trips: 0,
-    status: "",
-    leaveDate: "",
-    returnDate: "",
-  });
+  const [license_no, setLicenseNo] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [trips, setTrips] = useState(0);
+  const [incomplete_trips, setIncompleteTrips] = useState(0);
+  const [status, setStatus] = useState("");
+  const [leaveDate, setLeaveDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  // Sync internal state when the "driver" prop changes (when user clicks edit)
+  // Sync state with driver prop
   useEffect(() => {
     if (driver) {
-      setFormData({
-        license_no: driver.license_no || "",
-        name: driver.name || "",
-        phone: driver.phone || "",
-        email: driver.email || "",
-        incomplete_trips: driver.incomplete_trips || 0,
-        trips: driver.complete_trips || 0,
-        status: driver.status || "isAvailable",
-        leaveDate: driver.leave_date || "",
-        returnDate: driver.return_date || "",
-      });
+      setLicenseNo(driver.license_no || "");
+      setName(driver.name || "");
+      setPhone(driver.phone || "");
+      setEmail(driver.email || "");
+      setIncompleteTrips(driver.incomplete_trips || 0);
+      setTrips(driver.complete_trips || 0);
+      setStatus(driver.status || "isAvailable");
+
+      // Handle potential null dates from backend for the input fields
+      setLeaveDate(driver.leave_date ? driver.leave_date.substring(0, 16) : "");
+      setReturnDate(
+        driver.return_date ? driver.return_date.substring(0, 16) : "",
+      );
     }
   }, [driver]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // Helper to format date to ISO 8601 for the Backend
+  const formatToISO = (dateString) => {
+    if (!dateString || dateString === "") return null;
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date.toISOString();
   };
 
-  const onUpdate = async () => {
-    setIsUpdating(true);
-    await handleEdit({
+  const handleUpdateClick = async () => {
+    setIsLoading(true);
+
+    const payload = {
       id: driver.id,
-      license_no: formData.license_no,
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
-      complete_trips: formData.trips,
-      incomplete_trips: formData.incomplete_trips,
-      status: formData.status,
-      leave_date: formData.leaveDate,
-      return_date: formData.returnDate,
-    });
-    setIsUpdating(false);
+      license_no,
+      name,
+      phone,
+      email,
+      complete_trips: Number(trips),
+      incomplete_trips: Number(incomplete_trips),
+      status,
+      // If status isn't "onLeave", send null to avoid validation errors
+      leave_date: status === "onLeave" ? formatToISO(leaveDate) : null,
+      return_date: status === "onLeave" ? formatToISO(returnDate) : null,
+    };
+
+    try {
+      await handleEdit(payload);
+      // Bootstrap's data-bs-dismiss="modal" on the button usually handles closing
+    } catch (error) {
+      console.error("Update failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const styles = {
     modalContent: {
       borderRadius: "20px",
       border: "none",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+      boxShadow: "0px 20px 40px rgba(0, 0, 0, 0.1)",
     },
-    header: {
-      backgroundColor: "#F4F7FE",
-      borderTopLeftRadius: "20px",
-      borderTopRightRadius: "20px",
-      padding: "20px 24px",
-    },
+    header: { borderBottom: "1px solid #F4F7FE", padding: "1.5rem" },
+    title: { color: "#2B3674", fontWeight: "700" },
     label: {
-      fontSize: "0.75rem",
-      fontWeight: "700",
       color: "#2B3674",
-      marginLeft: "4px",
-      marginBottom: "6px",
+      fontWeight: "600",
+      fontSize: "0.9rem",
+      marginBottom: "0.5rem",
     },
     input: {
       borderRadius: "12px",
-      padding: "10px 16px",
-      border: "1px solid #E0E5F2",
-      fontSize: "0.9rem",
+      padding: "0.6rem 1rem",
+      border: "1px solid #D1D9E8",
+      color: "#2B3674",
     },
-    statsBox: {
-      backgroundColor: "#F8F9FD",
-      padding: "15px",
-      borderRadius: "15px",
-      border: "1px solid #F1F4F9",
+    primaryBtn: {
+      backgroundColor: "#4318FF",
+      border: "none",
+      borderRadius: "12px",
+      padding: "0.6rem 1.5rem",
+      fontWeight: "600",
     },
   };
 
@@ -104,111 +103,95 @@ function EditDriver({ driver, handleEdit }) {
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content" style={styles.modalContent}>
-          <div className="modal-header border-0" style={styles.header}>
-            <div className="d-flex align-items-center">
-              <div className="p-2 bg-primary rounded-3 text-white me-3">
-                <MdEdit size={20} />
-              </div>
-              <h5 className="modal-title fw-bold" style={{ color: "#2B3674" }}>
-                Update Driver Profile
-              </h5>
-            </div>
+          <div className="modal-header" style={styles.header}>
+            <h5 className="modal-title" style={styles.title}>
+              Update Driver Profile
+            </h5>
             <button
               type="button"
               className="btn-close"
               data-bs-dismiss="modal"
+              aria-label="Close"
             ></button>
           </div>
-
           <div className="modal-body p-4">
             <form>
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label style={styles.label}>License Number</label>
                   <input
-                    name="license_no"
+                    type="text"
                     className="form-control"
                     style={styles.input}
-                    value={formData.license_no}
-                    onChange={handleChange}
+                    value={license_no}
+                    onChange={(e) => setLicenseNo(e.target.value)}
                   />
                 </div>
                 <div className="col-md-6 mb-3">
                   <label style={styles.label}>Full Name</label>
                   <input
-                    name="name"
+                    type="text"
                     className="form-control"
                     style={styles.input}
-                    value={formData.name}
-                    onChange={handleChange}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
               </div>
 
               <div className="row">
                 <div className="col-md-6 mb-3">
-                  <label style={styles.label}>Phone</label>
+                  <label style={styles.label}>Phone Number</label>
                   <input
-                    name="phone"
+                    type="text"
                     className="form-control"
                     style={styles.input}
-                    value={formData.phone}
-                    onChange={handleChange}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label style={styles.label}>Email</label>
+                  <label style={styles.label}>Email Address</label>
                   <input
-                    name="email"
+                    type="email"
                     className="form-control"
                     style={styles.input}
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div style={styles.statsBox} className="mb-4 mt-2">
-                <p
-                  className="small fw-bold text-muted mb-3"
-                  style={{ letterSpacing: "0.5px" }}
-                >
-                  TRIP STATISTICS
-                </p>
-                <div className="row">
-                  <div className="col-6 mb-2">
-                    <label style={styles.label}>Total Completed</label>
-                    <input
-                      name="trips"
-                      type="number"
-                      className="form-control"
-                      style={styles.input}
-                      value={formData.trips}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="col-6 mb-2">
-                    <label style={styles.label}>Incomplete</label>
-                    <input
-                      name="incomplete_trips"
-                      type="number"
-                      className="form-control"
-                      style={styles.input}
-                      value={formData.incomplete_trips}
-                      onChange={handleChange}
-                    />
-                  </div>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Completed Trips</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    style={styles.input}
+                    value={trips}
+                    onChange={(e) => setTrips(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Incomplete Trips</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    style={styles.input}
+                    value={incomplete_trips}
+                    onChange={(e) => setIncompleteTrips(e.target.value)}
+                  />
                 </div>
               </div>
 
               <div className="mb-3">
-                <label style={styles.label}>Current Status</label>
+                <label style={styles.label}>Employment Status</label>
                 <select
-                  name="status"
                   className="form-select"
                   style={styles.input}
-                  value={formData.status}
-                  onChange={handleChange}
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
                 >
                   <option value="isAvailable">Available</option>
                   <option value="onDuty">On Duty</option>
@@ -216,54 +199,55 @@ function EditDriver({ driver, handleEdit }) {
                 </select>
               </div>
 
-              <div className="row">
-                <div className="col-6 mb-3">
-                  <label style={styles.label}>Leave Date</label>
-                  <input
-                    name="leaveDate"
-                    type="datetime-local"
-                    className="form-control"
-                    style={styles.input}
-                    value={formData.leaveDate}
-                    onChange={handleChange}
-                  />
+              {status === "onLeave" && (
+                <div className="row animate__animated animate__fadeIn">
+                  <div className="col-md-6 mb-3">
+                    <label style={styles.label}>Leave Date</label>
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      style={styles.input}
+                      value={leaveDate}
+                      onChange={(e) => setLeaveDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label style={styles.label}>Return Date</label>
+                    <input
+                      type="datetime-local"
+                      className="form-control"
+                      style={styles.input}
+                      value={returnDate}
+                      onChange={(e) => setReturnDate(e.target.value)}
+                    />
+                  </div>
                 </div>
-                <div className="col-6 mb-3">
-                  <label style={styles.label}>Return Date</label>
-                  <input
-                    name="returnDate"
-                    type="datetime-local"
-                    className="form-control"
-                    style={styles.input}
-                    value={formData.returnDate}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
+              )}
             </form>
           </div>
-
-          <div className="modal-footer border-0 px-4 pb-4">
+          <div className="modal-footer border-0 p-4">
             <button
               type="button"
-              className="btn btn-light px-4"
+              className="btn btn-link text-muted fw-bold text-decoration-none"
               data-bs-dismiss="modal"
-              style={{ borderRadius: "10px" }}
             >
               Cancel
             </button>
             <button
               type="button"
-              className="btn btn-primary px-4 shadow"
-              style={{
-                borderRadius: "10px",
-                backgroundColor: "#4318FF",
-                border: "none",
-              }}
-              onClick={onUpdate}
-              disabled={isUpdating}
+              className="btn btn-primary shadow"
+              style={styles.primaryBtn}
+              onClick={handleUpdateClick}
+              disabled={isLoading}
             >
-              {isUpdating ? "Saving Changes..." : "Update Driver"}
+              {isLoading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                  Updating...
+                </>
+              ) : (
+                "Update Driver"
+              )}
             </button>
           </div>
         </div>
