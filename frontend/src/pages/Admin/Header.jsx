@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaBars, FaTimes, FaBell, FaUserCircle } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { AdminContext } from "../../contexts/AdminContext";
 
 function Header({ onToggleSidebar, sidebarOpen }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const { trucks, drivers } = useContext(AdminContext);
+
+  const myTruck = trucks.find(
+    (t) => t.driver_info?.id?.toString() === drivers[0]?.id?.toString(),
+  );
+
+  const username = myTruck?.driver_info?.name || "Driver";
 
   // --- CUSTOM STYLES ---
   const styles = {
@@ -119,7 +128,7 @@ function Header({ onToggleSidebar, sidebarOpen }) {
                 lineHeight: "1",
               }}
             >
-              Alex Johnson
+              {username || "Alex Johnson"}
             </div>
             <span style={{ color: "#A3AED0", fontSize: "0.75rem" }}>
               Admin Manager
