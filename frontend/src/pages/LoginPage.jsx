@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import { FaTruck } from "react-icons/fa";
 import { useContext } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AdminContext } from "../contexts/AdminContext";
 
 function LoginPage() {
@@ -15,6 +16,7 @@ function LoginPage() {
     username: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const handleLogin = async (e) => {
@@ -86,20 +88,34 @@ function LoginPage() {
           />
         </div>
 
-        <div className="mb-3 text-start">
+        <div className="mb-3 text-start position-relative">
           <label htmlFor="password" className="form-label">
             Password
           </label>
+
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             id="password"
-            className="form-control"
+            className="form-control pe-5"
             placeholder="Enter password"
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
           />
+
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: "absolute",
+              right: "15px",
+              top: "38px",
+              cursor: "pointer",
+              color: "#6c757d",
+            }}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </div>
 
         <button type="submit" className="btn btn-primary w-100">

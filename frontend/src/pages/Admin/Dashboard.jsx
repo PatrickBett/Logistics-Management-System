@@ -6,8 +6,10 @@ import {
   FaUsers,
   FaRoute,
   FaMoneyBillWave,
+  FaWeightHanging,
+  FaCalendarCheck,
 } from "react-icons/fa";
-import { motion } from "framer-motion"; // animation library
+import { motion } from "framer-motion";
 import TripsChart from "../../charts/TripsChart";
 
 function Dashboard() {
@@ -20,45 +22,106 @@ function Dashboard() {
     totalweighttransported,
   } = useContext(AdminContext);
 
-  // Animation variants
+  // --- CUSTOM STYLES ---
+  const styles = {
+    dashboardWrapper: {
+      backgroundColor: "#f4f7fe",
+      minHeight: "100vh",
+      padding: "2rem",
+      fontFamily: "'Inter', sans-serif",
+    },
+    mainTitle: {
+      color: "#2B3674",
+      fontSize: "1.8rem",
+      fontWeight: "800",
+      letterSpacing: "-0.5px",
+    },
+    card: {
+      background: "#ffffff",
+      borderRadius: "20px",
+      border: "none",
+      boxShadow: "0px 20px 40px rgba(0, 0, 0, 0.03)",
+    },
+    iconCircle: (bgColor) => ({
+      width: "56px",
+      height: "56px",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: bgColor,
+      marginBottom: "1rem",
+    }),
+    tableHeader: {
+      backgroundColor: "#F8F9FA",
+      color: "#A3AED0",
+      textTransform: "uppercase",
+      fontSize: "0.75rem",
+      fontWeight: "700",
+      letterSpacing: "0.05em",
+    },
+    statValue: {
+      color: "#2B3674",
+      fontSize: "1.5rem",
+      fontWeight: "700",
+    },
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
+
   const rowVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, x: -10 },
     visible: { opacity: 1, x: 0 },
   };
 
   return (
-    <div className="container-fluid px-3">
+    <div style={styles.dashboardWrapper}>
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center my-4">
-        <h2 className="fw-bold">Admin Dashboard</h2>
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <h2 style={styles.mainTitle}>Logistics Overview</h2>
+        <div className="text-muted small fw-medium">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </div>
       </div>
 
       {/* Summary cards */}
       <div className="row g-4 mb-5">
         {[
           {
-            icon: <FaUser className="fs-3 text-primary mb-2" />,
+            icon: <FaUser />,
             title: "Total Drivers",
             value: drivers.length,
+            color: "#E7EEFF",
+            iconColor: "#4318FF",
           },
           {
-            icon: <FaTruck className="fs-3 text-success mb-2" />,
+            icon: <FaTruck />,
             title: "Total Trucks",
             value: trucks.length,
+            color: "#E6FAF5",
+            iconColor: "#05CD99",
           },
           {
-            icon: <FaUsers className="fs-3 text-warning mb-2" />,
+            icon: <FaUsers />,
             title: "Total Parties",
             value: parties.length,
+            color: "#FFF8E6",
+            iconColor: "#FFB547",
           },
           {
-            icon: <FaRoute className="fs-3 text-danger mb-2" />,
+            icon: <FaRoute />,
             title: "Total Journeys",
             value: journeys.length,
+            color: "#FFEAF2",
+            iconColor: "#EE5D50",
           },
         ].map((card, idx) => (
           <motion.div
@@ -67,77 +130,86 @@ function Dashboard() {
             variants={cardVariants}
             initial="hidden"
             animate="visible"
-            transition={{ delay: idx * 0.2, duration: 0.5 }}
+            transition={{ delay: idx * 0.1, duration: 0.4 }}
           >
-            <div className="card shadow-sm border-0 h-100">
-              <div className="card-body text-center">
-                {card.icon}
-                <h6 className="text-muted mb-1">{card.title}</h6>
-                <div className="fs-3 fw-bold">{card.value}</div>
+            <div className="card h-100 p-3" style={styles.card}>
+              <div className="card-body d-flex flex-column align-items-center text-center">
+                <div style={styles.iconCircle(card.color)}>
+                  {React.cloneElement(card.icon, {
+                    style: { color: card.iconColor, fontSize: "1.5rem" },
+                  })}
+                </div>
+                <h6 style={{ color: "#A3AED0", fontWeight: "600" }}>
+                  {card.title}
+                </h6>
+                <div style={styles.statValue}>{card.value}</div>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Tables & charts */}
       <div className="row g-4">
-        {/* Company Updates */}
+        {/* Company Updates & Insights */}
         <div className="col-lg-6">
-          <div
-            className="card shadow-sm border-0 h-100"
-            style={{ background: "#F8F9FA" }}
-          >
-            <div className="card-header bg-white fw-bold">Company Updates</div>
-            <div className="card-body">
-              <div className="row g-3">
-                {/* Revenue & Weight Cards */}
-                {[
-                  {
-                    icon: (
-                      <FaMoneyBillWave className="fs-3 text-warning mb-2" />
-                    ),
-                    title: "Total Revenue",
-                    value: `KES ${totalrevenue}`,
-                  },
-                  {
-                    icon: (
-                      <FaMoneyBillWave className="fs-3 text-warning mb-2" />
-                    ),
-                    title: "Total Weight Transported",
-                    value: `${totalweighttransported} Kgs`,
-                  },
-                ].map((stat, idx) => (
-                  <motion.div
-                    className="col-sm-6"
-                    key={idx}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: idx * 0.2, duration: 0.5 }}
+          <div className="card h-100" style={styles.card}>
+            <div className="card-header bg-transparent border-0 px-4 pt-4">
+              <h5 style={{ color: "#2B3674", fontWeight: "700" }}>
+                Financial Performance
+              </h5>
+            </div>
+            <div className="card-body px-4">
+              <div className="row g-3 mb-4">
+                <div className="col-6">
+                  <div
+                    className="p-3"
+                    style={{ background: "#F4F7FE", borderRadius: "15px" }}
                   >
-                    <div className="card shadow-sm border-0 h-100">
-                      <div className="card-body text-center">
-                        {stat.icon}
-                        <h6 className="text-muted mb-1">{stat.title}</h6>
-                        <div className="fs-4 fw-bold">{stat.value}</div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    <FaMoneyBillWave
+                      className="mb-2"
+                      style={{ color: "#05CD99" }}
+                    />
+                    <p className="text-muted small mb-1">Total Revenue</p>
+                    <h5 className="fw-bold mb-0 text-dark">
+                      KES {totalrevenue.toLocaleString()}
+                    </h5>
+                  </div>
+                </div>
+                <div className="col-6">
+                  <div
+                    className="p-3"
+                    style={{ background: "#F4F7FE", borderRadius: "15px" }}
+                  >
+                    <FaWeightHanging
+                      className="mb-2"
+                      style={{ color: "#4318FF" }}
+                    />
+                    <p className="text-muted small mb-1">Weight Moved</p>
+                    <h5 className="fw-bold mb-0 text-dark">
+                      {totalweighttransported} Kgs
+                    </h5>
+                  </div>
+                </div>
               </div>
 
-              {/* Overweight Shipments Table */}
-              <div className="mt-4 card-header bg-white fw-bold">
-                Overweight Shipments
-              </div>
-              <div className="mt-2 table-responsive">
-                <table className="table table-bordered table-hover">
-                  <thead className="table-light">
+              <h6
+                className="mb-3"
+                style={{
+                  color: "#2B3674",
+                  fontWeight: "700",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Overweight Shipments Alert
+              </h6>
+              <div className="table-responsive">
+                <table className="table align-middle">
+                  <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Party Name</th>
-                      <th>Weight Exceeded</th>
+                      <th style={styles.tableHeader}>Party</th>
+                      <th style={styles.tableHeader} className="text-end">
+                        Exceeded
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -150,37 +222,18 @@ function Dashboard() {
                           Number(party.voltransported) -
                           Number(party.total_vol);
                         return (
-                          <motion.tr
-                            key={party.id}
-                            variants={rowVariants}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{ delay: idx * 0.1 }}
-                            whileHover={{
-                              scale: 1.02,
-                              backgroundColor: "#ffe6e6",
-                            }}
-                            className="fw-medium"
-                            style={{
-                              backgroundColor:
-                                diff > 0 ? "#ffcccc" : "transparent",
-                            }}
-                          >
-                            <td>{idx + 1}</td>
-                            <td>{party.name}</td>
-                            <td>{diff} kgs</td>
+                          <motion.tr key={party.id} variants={rowVariants}>
+                            <td className="fw-bold text-secondary">
+                              {party.name}
+                            </td>
+                            <td className="text-end">
+                              <span className="badge rounded-pill bg-danger-subtle text-danger px-3">
+                                + {diff} kg
+                              </span>
+                            </td>
                           </motion.tr>
                         );
                       })}
-                    {parties.filter(
-                      (p) => Number(p.voltransported) > Number(p.total_vol),
-                    ).length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="text-center text-muted py-3">
-                          No parties have exceeded their total volume
-                        </td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>
@@ -190,64 +243,62 @@ function Dashboard() {
 
         {/* Drivers on Leave */}
         <div className="col-lg-6">
-          <div
-            className="card shadow-sm border-0 h-100"
-            style={{ background: "#F8F9FA" }}
-          >
-            <div className="card-header bg-white fw-bold">Drivers on Leave</div>
-            <div className="card-body table-responsive">
-              <table className="table table-bordered table-hover">
-                <thead className="table-light">
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>License No</th>
-                    <th>Phone</th>
-                    <th>Leave Date</th>
-                    <th>Return Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {drivers.filter((d) => d.status === "onLeave").length > 0 ? (
-                    drivers
-                      .filter((d) => d.status === "onLeave")
-                      .map((driver, idx) => (
-                        <motion.tr
-                          key={driver.id}
-                          variants={rowVariants}
-                          initial="hidden"
-                          animate="visible"
-                          transition={{ delay: idx * 0.1 }}
-                          whileHover={{
-                            scale: 1.02,
-                            backgroundColor: "#e6f7ff",
-                          }}
-                        >
-                          <td>{idx + 1}</td>
-                          <td className="fw-medium">{driver.name}</td>
-                          <td>{driver.license_no}</td>
-                          <td>{driver.phone}</td>
-                          <td>
-                            {driver.leave_date
-                              ? driver.leave_date.slice(0, 16)
-                              : "—"}
-                          </td>
-                          <td>
-                            {driver.return_date
-                              ? driver.return_date.slice(0, 16)
-                              : "—"}
-                          </td>
-                        </motion.tr>
-                      ))
-                  ) : (
+          <div className="card h-100" style={styles.card}>
+            <div className="card-header bg-transparent border-0 px-4 pt-4 d-flex justify-content-between align-items-center">
+              <h5 style={{ color: "#2B3674", fontWeight: "700" }}>
+                Drivers on Leave
+              </h5>
+              <FaCalendarCheck style={{ color: "#A3AED0" }} />
+            </div>
+            <div className="card-body px-4">
+              <div className="table-responsive">
+                <table className="table table-hover align-middle">
+                  <thead>
                     <tr>
-                      <td colSpan={6} className="text-center text-muted py-4">
-                        No driver currently on leave
-                      </td>
+                      <th style={styles.tableHeader}>Driver</th>
+                      <th style={styles.tableHeader}>Phone</th>
+                      <th style={styles.tableHeader}>Return Date</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {drivers.filter((d) => d.status === "onLeave").length >
+                    0 ? (
+                      drivers
+                        .filter((d) => d.status === "onLeave")
+                        .map((driver, idx) => (
+                          <motion.tr key={driver.id} variants={rowVariants}>
+                            <td>
+                              <div className="fw-bold text-dark">
+                                {driver.name}
+                              </div>
+                              <div className="text-muted small">
+                                {driver.license_no}
+                              </div>
+                            </td>
+                            <td className="text-secondary small">
+                              {driver.phone}
+                            </td>
+                            <td>
+                              <div className="badge bg-primary-subtle text-primary fw-medium">
+                                {driver.return_date
+                                  ? driver.return_date.slice(0, 10)
+                                  : "—"}
+                              </div>
+                            </td>
+                          </motion.tr>
+                        ))
+                    ) : (
+                      <tr>
+                        <td colSpan={3} className="text-center py-5">
+                          <div className="text-muted">
+                            All drivers are currently active
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

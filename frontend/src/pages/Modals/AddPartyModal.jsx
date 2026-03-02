@@ -2,51 +2,111 @@ import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../api";
 import { AdminContext } from "../../contexts/AdminContext";
+import {
+  MdBusiness,
+  MdPerson,
+  MdPhone,
+  MdEmail,
+  MdBarChart,
+  MdAttachMoney,
+} from "react-icons/md";
+
 function AddPartyModal() {
   const { setParties } = useContext(AdminContext);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [partyName, setPartyName] = useState("");
-  const [contact, setContact] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [totalvol, setTotalVol] = useState("");
-  const [voltransported, setVolTransported] = useState(0);
-  const [price, setPrice] = useState("");
-  const [pricepaid, setPricePaid] = useState("");
-  const [status, setStatus] = useState("");
+  const [formData, setFormData] = useState({
+    partyName: "",
+    contact: "",
+    phone: "",
+    email: "",
+    totalvol: "",
+    voltransported: 0,
+    price: "",
+    pricepaid: "",
+    status: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    console.log({ partyName, contact, phone, email });
+    setIsLoading(true);
     try {
       const res = await api.post("api/parties/", {
-        name: partyName,
-        contact_person: contact,
-        phone,
-        email,
-        status,
-        total_vol: totalvol,
-        voltransported,
-        price,
-        pricepaid,
+        name: formData.partyName,
+        contact_person: formData.contact,
+        phone: formData.phone,
+        email: formData.email,
+        status: formData.status,
+        total_vol: formData.totalvol,
+        voltransported: formData.voltransported,
+        price: formData.price,
+        pricepaid: formData.pricepaid,
       });
 
-      const newParty = res.data;
-      setParties((prev) => [newParty, ...prev]);
+      setParties((prev) => [res.data, ...prev]);
+      toast.success("New Client Added Successfully");
 
-      toast.success("Party Added Successfully");
-      setPartyName("");
-      setContact("");
-      setPhone("");
-      setEmail("");
-      setTotalVol("");
-      setVolTransported("");
-      setPrice("");
-      setPricePaid("");
-      setStatus("");
+      // Reset form
+      setFormData({
+        partyName: "",
+        contact: "",
+        phone: "",
+        email: "",
+        totalvol: "",
+        voltransported: 0,
+        price: "",
+        pricepaid: "",
+        status: "",
+      });
     } catch (e) {
-      toast.error("Error Adding Party");
+      toast.error("Error adding party. Check connection.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const styles = {
+    modalContent: {
+      borderRadius: "20px",
+      border: "none",
+      boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+    },
+    label: {
+      fontSize: "0.8rem",
+      fontWeight: "700",
+      color: "#2B3674",
+      marginBottom: "8px",
+      display: "block",
+    },
+    sectionDivider: {
+      fontSize: "0.7rem",
+      fontWeight: "800",
+      color: "#A3AED0",
+      textTransform: "uppercase",
+      letterSpacing: "1px",
+      margin: "20px 0 15px 0",
+      borderBottom: "1px solid #F4F7FE",
+      paddingBottom: "5px",
+    },
+    input: {
+      borderRadius: "12px",
+      backgroundColor: "#F4F7FE",
+      border: "1px solid #E0E5F2",
+      padding: "10px 15px",
+      fontSize: "0.9rem",
+    },
+    saveBtn: {
+      backgroundColor: "#4318FF",
+      borderRadius: "12px",
+      padding: "10px 25px",
+      fontWeight: "600",
+      border: "none",
+    },
   };
 
   return (
@@ -54,13 +114,14 @@ function AddPartyModal() {
       className="modal fade"
       id="party-modal"
       tabIndex="-1"
-      aria-labelledby="partyModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Add Party</h5>
+      <div className="modal-dialog modal-dialog-centered modal-lg">
+        <div className="modal-content" style={styles.modalContent}>
+          <div className="modal-header border-0 p-4">
+            <h5 className="fw-bold mb-0" style={{ color: "#2B3674" }}>
+              Register New Client (Party)
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -68,111 +129,161 @@ function AddPartyModal() {
             ></button>
           </div>
 
-          <div className="modal-body">
-            <form>
-              <div className="mb-3">
-                <label className="form-label">Party Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={partyName}
-                  onChange={(e) => setPartyName(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Contact Person</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Phone</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Total Volume</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={totalvol}
-                  onChange={(e) => setTotalVol(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Weight Transported</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={voltransported}
-                  onChange={(e) => setVolTransported(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Price</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
+          <div className="modal-body px-4 pt-0">
+            <form onSubmit={handleSave}>
+              {/* CONTACT SECTION */}
+              <div style={styles.sectionDivider}>Contact Details</div>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Company/Party Name</label>
+                  <input
+                    name="partyName"
+                    type="text"
+                    className="form-control"
+                    style={styles.input}
+                    value={formData.partyName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Contact Person</label>
+                  <input
+                    name="contact"
+                    type="text"
+                    className="form-control"
+                    style={styles.input}
+                    value={formData.contact}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Phone Number</label>
+                  <input
+                    name="phone"
+                    type="text"
+                    className="form-control"
+                    style={styles.input}
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Email Address</label>
+                  <input
+                    name="email"
+                    type="email"
+                    className="form-control"
+                    style={styles.input}
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Price Paid</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={pricepaid}
-                  onChange={(e) => setPricePaid(e.target.value)}
-                />
+              {/* LOGISTICS SECTION */}
+              <div style={styles.sectionDivider}>Logistics & Volume</div>
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <label style={styles.label}>Total Contract Vol</label>
+                  <input
+                    name="totalvol"
+                    type="number"
+                    className="form-control"
+                    style={styles.input}
+                    value={formData.totalvol}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label style={styles.label}>Already Transported</label>
+                  <input
+                    name="voltransported"
+                    type="number"
+                    className="form-control"
+                    style={styles.input}
+                    value={formData.voltransported}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label style={styles.label}>Relationship Status</label>
+                  <select
+                    name="status"
+                    className="form-select"
+                    style={styles.input}
+                    value={formData.status}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Status</option>
+                    <option value="isActive">Active Client</option>
+                    <option value="isNotActive">Inactive</option>
+                  </select>
+                </div>
               </div>
-              <div className="mb-3">
-                <label>Status</label>
-                <select
-                  className="form-select"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+
+              {/* BILLING SECTION */}
+              <div style={styles.sectionDivider}>Financials</div>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Total Contract Price</label>
+                  <div className="input-group">
+                    <span
+                      className="input-group-text bg-transparent border-end-0"
+                      style={{ borderRadius: "12px 0 0 12px" }}
+                    >
+                      $
+                    </span>
+                    <input
+                      name="price"
+                      type="number"
+                      className="form-control border-start-0"
+                      style={{ ...styles.input, borderRadius: "0 12px 12px 0" }}
+                      value={formData.price}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label style={styles.label}>Total Amount Paid</label>
+                  <div className="input-group">
+                    <span
+                      className="input-group-text bg-transparent border-end-0"
+                      style={{ borderRadius: "12px 0 0 12px" }}
+                    >
+                      $
+                    </span>
+                    <input
+                      name="pricepaid"
+                      type="number"
+                      className="form-control border-start-0"
+                      style={{ ...styles.input, borderRadius: "0 12px 12px 0" }}
+                      value={formData.pricepaid}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer border-0 px-0 mt-3">
+                <button
+                  type="button"
+                  className="btn btn-light px-4"
+                  data-bs-dismiss="modal"
+                  style={{ borderRadius: "10px" }}
                 >
-                  <option value="">Select Status</option>
-                  <option value="isActive">Active</option>
-                  <option value="isNotActive">Not Active</option>
-                </select>
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={styles.saveBtn}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Adding..." : "Save Party"}
+                </button>
               </div>
             </form>
-          </div>
-
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSave}
-            >
-              Save Party
-            </button>
           </div>
         </div>
       </div>

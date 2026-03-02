@@ -30,3 +30,23 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             "message": event["message"],
             "created_at": event["created_at"]
         }))
+class DriverStatusConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        #All drivers updates will be sent to a shared group
+        self.group_name = "drivers_status"
+        await self.channel_layer.group_add(
+            self.group_name,
+            self.channel_name
+        )
+        await self.accept()
+    async def disconnect(self,close_code):
+        await self.channel_layer.group_discard(
+            self.group_name,
+            self.channel_name
+        )
+    async def driver_update(self,event):
+        await self.send(text_data=json.dumps({
+            "drivers":event["drivers"]
+        }))
+
+

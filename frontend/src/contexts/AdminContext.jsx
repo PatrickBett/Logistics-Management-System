@@ -6,7 +6,6 @@ export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const [drivers, setDrivers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditingDriver, setEditingDriver] = useState(null);
@@ -17,7 +16,24 @@ export const AdminProvider = ({ children }) => {
   const [trucks, setTrucks] = useState([]);
   const [journeys, setJourneys] = useState([]);
   const [selectedStatus, setselectedStatus] = useState("All");
+  // const [driversonleave, setDriversOnLeave] = useState("")
 
+  const token = localStorage.getItem("access")
+  useEffect(()=>{
+    const ws = new WebSocket(`ws://localhost:8000/ws/drivers/`)
+
+     ws.onopen = () => {
+      console.log("Driver WebSocket connected");
+    };
+    ws.onmessage = (event)=>{
+      const data = JSON.parse(event.data)
+      setDrivers(data.drivers)
+    }
+    ws.onclose = ()=> console.log("Driver Websocket closed")
+    return ()=>{
+      ws.close()
+    }
+  },[])
   //fetch parties
   const fetchParties = async () => {
     try {

@@ -54,7 +54,7 @@ class Driver(models.Model):
         # If driver goes on leave for the first time
         if self.status == 'onLeave' and not self.leave_date:
             self.leave_date = now
-            self.return_date = now + timedelta(minutes=2)
+            self.return_date = now + timedelta(minutes=1)
             
         # If leave time has expired
         # if self.return_date and self.return_date <= now:

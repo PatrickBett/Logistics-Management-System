@@ -27,3 +27,9 @@ Drivers can register on the site only after added by the admin as one of the com
 
 This dashboard is intended for internal administrative use.
 ![alt text](image-3.png)
+
+# This starts Celery Beat, the scheduler
+celery -A backend beat --loglevel=info
+
+# To Start a Celery worker process
+celery -A backend worker -l info

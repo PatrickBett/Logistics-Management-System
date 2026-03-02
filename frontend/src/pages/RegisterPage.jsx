@@ -4,10 +4,13 @@ import api from "../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function RegisterPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     license_no: "",
     username: "",
@@ -100,32 +103,62 @@ function RegisterPage() {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-3 position-relative">
             <label htmlFor="password" className="form-label">
               Password
             </label>
+
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
-              className="form-control"
+              className="form-control pe-5"
               placeholder="Enter password"
               onChange={handleChange}
             />
+
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute",
+                right: "15px",
+                top: "38px",
+                cursor: "pointer",
+                color: "#6c757d",
+              }}
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
 
-          <div className="mb-3">
+          <div className="mb-3 position-relative">
             <label htmlFor="confirm_password" className="form-label">
               Confirm Password
             </label>
+
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               name="confirm_password"
               id="confirm_password"
-              className="form-control"
+              className="form-control pe-5"
               placeholder="Confirm password"
               onChange={handleChange}
             />
+
+            <span
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={{
+                position: "absolute",
+                right: "15px",
+                top: "38px",
+                cursor: "pointer",
+                color: "#6c757d",
+              }}
+              aria-label="Toggle confirm password visibility"
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
 
           <button type="submit" className="btn btn-primary w-100">

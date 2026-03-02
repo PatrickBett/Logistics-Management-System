@@ -174,7 +174,7 @@ CELERY_RESULT_BACKEND = 'django-db'
 CELERY_BEAT_SCHEDULE = {
     'update-driver-status-every-3-mins': {
         'task': 'logistics.tasks.update_driver_status',
-        'schedule': timedelta(minutes=3),  # runs every 3 minutes
+        'schedule': timedelta(seconds=20),  # runs every 3 minutes
         'args': (),  # optional arguments
     },
 }

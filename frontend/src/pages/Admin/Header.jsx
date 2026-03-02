@@ -1,87 +1,134 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaTimes, FaBell } from "react-icons/fa";
+import { FaBars, FaTimes, FaBell, FaUserCircle } from "react-icons/fa";
 import { IoMdArrowDropdown } from "react-icons/io";
 
 function Header({ onToggleSidebar, sidebarOpen }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // --- CUSTOM STYLES ---
+  const styles = {
+    header: {
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      backdropFilter: "blur(10px)",
+      borderBottom: "1px solid #E9EDF7",
+      padding: "0.75rem 2rem",
+      position: "sticky",
+      top: 0,
+      zIndex: 1000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    actionIcon: {
+      fontSize: "1.2rem",
+      color: "#A3AED0",
+      cursor: "pointer",
+      transition: "color 0.2s",
+    },
+    badge: {
+      position: "absolute",
+      top: "-4px",
+      right: "-4px",
+      backgroundColor: "#EE5D50", // Matching your dashboard's "danger" red
+      color: "white",
+      borderRadius: "50%",
+      width: "18px",
+      height: "18px",
+      fontSize: "10px",
+      fontWeight: "bold",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "2px solid white",
+    },
+    profileSection: {
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      padding: "4px 8px",
+      borderRadius: "30px",
+      cursor: "pointer",
+      transition: "background 0.2s",
+    },
+    avatar: {
+      width: "40px",
+      height: "40px",
+      borderRadius: "12px", // Modern "Squircle" look
+      objectFit: "cover",
+      border: "2px solid #4318FF",
+    },
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem("access"); // Or wherever your JWT is stored
+    const token = localStorage.getItem("access");
     const ws = new WebSocket(
       `ws://127.0.0.1:8000/ws/notifications/?token=${token}`,
     );
 
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-    };
-
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("New notification:", data);
       setNotifications((prev) => [data, ...prev]);
       setUnreadCount((prev) => prev + 1);
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket disconnected");
-    };
-
-    return () => {
-      ws.close();
-    };
+    return () => ws.close();
   }, []);
 
-  const handleBellClick = () => {
-    setUnreadCount(0); // Mark as read when user clicks
-    alert("You have " + notifications.length + " notifications");
-  };
-
   return (
-    <div
-      className="row text-light p-3 px-5 align-items-center"
-      style={{ borderBottom: "2px solid #e5e7eb" }}
-    >
-      <div className="col">
-        <button className="btn btn-dark d-md-none" onClick={onToggleSidebar}>
-          {sidebarOpen ? <FaTimes /> : <FaBars />}
+    <header style={styles.header}>
+      {/* Left: Mobile Toggle */}
+      <div className="d-flex align-items-center">
+        <button
+          className="btn border-0 d-md-none me-3"
+          onClick={onToggleSidebar}
+          style={{ color: "#2B3674" }}
+        >
+          {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
         </button>
+        <span className="d-none d-md-block fw-medium text-muted small">
+          Pages / Dashboard
+        </span>
       </div>
 
-      <div className="col text-end" style={{ position: "relative" }}>
-        <FaBell
-          className="text-dark me-5"
+      {/* Right: Actions & Profile */}
+      <div className="d-flex align-items-center gap-4">
+        {/* Notification Bell */}
+        <div
+          className="position-relative"
           style={{ cursor: "pointer" }}
-          onClick={handleBellClick}
-        />
-        {unreadCount > 0 && (
-          <span
-            style={{
-              position: "absolute",
-              top: "5px",
-              right: "80px",
-              backgroundColor: "red",
-              color: "white",
-              borderRadius: "50%",
-              width: "18px",
-              height: "18px",
-              fontSize: "12px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {unreadCount}
-          </span>
-        )}
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/250px-Outdoors-man-portrait_%28cropped%29.jpg"
-          style={{ width: "40px", height: "40px", borderRadius: "50%" }}
-          alt="profile"
-        />{" "}
-        <IoMdArrowDropdown style={{ color: "black" }} />
+          onClick={() => setUnreadCount(0)}
+        >
+          <FaBell style={styles.actionIcon} />
+          {unreadCount > 0 && <span style={styles.badge}>{unreadCount}</span>}
+        </div>
+
+        {/* User Profile */}
+        <div style={styles.profileSection} className="header-profile-hover">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Outdoors-man-portrait_%28cropped%29.jpg/250px-Outdoors-man-portrait_%28cropped%29.jpg"
+            style={styles.avatar}
+            alt="profile"
+          />
+          <div className="d-none d-lg-block">
+            <div
+              style={{
+                color: "#2B3674",
+                fontWeight: "700",
+                fontSize: "0.9rem",
+                lineHeight: "1",
+              }}
+            >
+              Alex Johnson
+            </div>
+            <span style={{ color: "#A3AED0", fontSize: "0.75rem" }}>
+              Admin Manager
+            </span>
+          </div>
+          <IoMdArrowDropdown style={{ color: "#A3AED0" }} />
+        </div>
       </div>
-    </div>
+    </header>
   );
 }
 
