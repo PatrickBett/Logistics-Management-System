@@ -29,6 +29,32 @@ function Trucks() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const role = localStorage.getItem("role");
 
+  const brandTeal = "#1a839a";
+  const darkNavy = "#2B3674";
+
+  // --- DATE FORMATTER HELPER ---
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return <span className="text-muted opacity-50">Not Set</span>;
+    const date = new Date(dateStr);
+    return (
+      <div style={{ fontSize: "0.85rem" }}>
+        <div className="fw-bold" style={{ color: darkNavy }}>
+          {date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </div>
+        <div className="text-muted small">
+          {date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </div>
+      </div>
+    );
+  };
+
   // --- CUSTOM STYLES ---
   const styles = {
     container: {
@@ -36,7 +62,7 @@ function Trucks() {
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },
-    headerText: { color: "#2B3674", fontWeight: "700", fontSize: "1.75rem" },
+    headerText: { color: darkNavy, fontWeight: "700", fontSize: "1.75rem" },
     searchWrapper: { position: "relative", maxWidth: "450px", width: "100%" },
     searchInput: {
       borderRadius: "30px",
@@ -64,20 +90,21 @@ function Trucks() {
       fontWeight: "600",
       padding: "10px 15px",
       fontSize: "0.9rem",
-      color: isActive ? "#4318FF" : "#A3AED0",
-      borderBottom: isActive ? "3px solid #4318FF" : "3px solid transparent",
+      color: isActive ? brandTeal : "#A3AED0",
+      borderBottom: isActive
+        ? `3px solid ${brandTeal}`
+        : "3px solid transparent",
       transition: "all 0.3s ease",
     }),
     statusBadge: (status) => {
-      const isOnMaint = status === "onMaintenance";
+      const isOnMaint = status === "onMaintenance" || status === "outOfService";
       return {
-        backgroundColor: isOnMaint ? "#FFF8E6" : "#F0FFF4",
+        backgroundColor: isOnMaint ? "#FFF8E6" : "#E6F6F4",
         color: isOnMaint ? "#FFB547" : "#05CD99",
-        padding: "5px 12px",
-        borderRadius: "20px",
+        padding: "6px 14px",
+        borderRadius: "12px",
         fontSize: "0.75rem",
         fontWeight: "700",
-        display: "inline-block",
       };
     },
     actionBtn: (type) => ({
@@ -89,13 +116,13 @@ function Trucks() {
       justifyContent: "center",
       border: "none",
       backgroundColor: "#F4F7FE",
-      color: type === "edit" ? "#4318FF" : "#EE5D50",
+      color: type === "edit" ? brandTeal : "#EE5D50",
       transition: "all 0.2s",
     }),
     pageBtn: (isActive) => ({
       borderRadius: "8px",
-      backgroundColor: isActive ? "#4318FF" : "#fff",
-      color: isActive ? "#fff" : "#2B3674",
+      backgroundColor: isActive ? brandTeal : "#fff",
+      color: isActive ? "#fff" : darkNavy,
       border: "none",
       width: "35px",
       height: "35px",
@@ -119,15 +146,12 @@ function Trucks() {
         );
       })
       .filter((truck) => {
-        if (filter === "assigned")
-          return truck.driver_info && truck.driver_info.name;
-        if (filter === "unassigned")
-          return !truck.driver_info || !truck.driver_info.name;
+        if (filter === "assigned") return truck.driver_info?.name;
+        if (filter === "unassigned") return !truck.driver_info?.name;
         return true;
       });
   }, [searchQuery, trucks, filter]);
 
-  // --- PAGINATION CALCULATIONS ---
   const totalPages = Math.ceil(filteredTrucks.length / itemsPerPage);
   const currentTrucks = filteredTrucks.slice(
     (currentPage - 1) * itemsPerPage,
@@ -141,20 +165,20 @@ function Trucks() {
 
   return (
     <div style={styles.container}>
-      {/* Header Section */}
+      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 style={styles.headerText}>Trucks Inventory</h2>
+          <h2 style={styles.headerText}>Fleet Inventory</h2>
           <p className="text-muted small mb-0">
-            Manage fleet details and maintenance schedules
+            Monitor truck condition and driver assignments
           </p>
         </div>
         {role === "admin" && (
           <button
-            className="btn btn-primary px-4 shadow-sm d-flex align-items-center"
+            className="btn text-white px-4 shadow-sm d-flex align-items-center"
             style={{
               borderRadius: "12px",
-              backgroundColor: "#4318FF",
+              backgroundColor: brandTeal,
               border: "none",
               height: "45px",
             }}
@@ -166,7 +190,7 @@ function Trucks() {
         )}
       </div>
 
-      {/* Search and Filters */}
+      {/* Search & Tabs */}
       <div className="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
         <div style={styles.searchWrapper}>
           <FaSearch style={styles.searchIcon} />
@@ -174,11 +198,11 @@ function Trucks() {
             type="search"
             className="form-control"
             style={styles.searchInput}
-            placeholder="Search by No, Type, or Driver..."
+            placeholder="Find plate number or driver..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setCurrentPage(1); // Reset to page 1 on search
+              setCurrentPage(1);
             }}
           />
         </div>
@@ -191,39 +215,39 @@ function Trucks() {
                   key={type}
                   onClick={() => {
                     setFilter(type);
-                    setCurrentPage(1); // Reset to page 1 on filter
+                    setCurrentPage(1);
                   }}
                   style={styles.tab(filter === type)}
                 >
                   {type === "all"
-                    ? "All Fleet"
+                    ? "Total Fleet"
                     : type === "assigned"
                       ? "Assigned"
-                      : "Unassigned"}
+                      : "Available"}
                 </div>
               ))}
               <button
                 className="btn btn-link text-decoration-none text-muted small ms-3"
                 onClick={() =>
-                  (window.location.href = `${API_BASE_URL}/api/trucks/download_csv/`)
+                  (window.location.href = `${API_BASE_URL}api/trucks/download_csv/`)
                 }
               >
-                <FaFileCsv className="me-1" /> Export
+                <FaFileCsv className="me-1" /> Export CSV
               </button>
             </>
           ) : (
             <span
-              className="badge bg-white text-dark p-2 shadow-sm"
+              className="badge bg-white text-dark p-2 shadow-sm border-0"
               style={{ borderRadius: "10px" }}
             >
-              <MdLocalShipping className="me-2 text-primary" /> My Assigned
-              Truck
+              <MdLocalShipping className="me-2" style={{ color: brandTeal }} />{" "}
+              Unit Overview
             </span>
           )}
         </div>
       </div>
 
-      {/* Table Section */}
+      {/* Table */}
       <div style={styles.tableCard}>
         <div className="table-responsive">
           <table className="table align-middle">
@@ -231,16 +255,17 @@ function Trucks() {
               <tr
                 style={{
                   color: "#A3AED0",
-                  fontSize: "0.8rem",
+                  fontSize: "0.75rem",
                   textTransform: "uppercase",
                   letterSpacing: "1px",
                 }}
               >
-                <th className="border-0 pb-3">Truck Details</th>
-                <th className="border-0 pb-3">Current Driver</th>
-                <th className="border-0 pb-3">Maintenance Log</th>
-                <th className="border-0 pb-3 text-center">Status</th>
-                <th className="border-0 pb-3 text-end">Actions</th>
+                <th className="border-0 pb-3">Vehicle Details</th>
+                <th className="border-0 pb-3">Assigned Operator</th>
+                <th className="border-0 pb-3">Last Maintenance</th>
+                <th className="border-0 pb-3">Next Service Due</th>
+                <th className="border-0 pb-3 text-center">Condition</th>
+                <th className="border-0 pb-3 text-end">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -251,7 +276,7 @@ function Trucks() {
                     style={{ borderBottom: "1px solid #F4F7FE" }}
                   >
                     <td className="py-3">
-                      <div className="fw-bold" style={{ color: "#2B3674" }}>
+                      <div className="fw-bold" style={{ color: darkNavy }}>
                         {truck.truck_no}
                       </div>
                       <div className="text-muted small">{truck.type}</div>
@@ -260,40 +285,44 @@ function Trucks() {
                       {truck.driver_info ? (
                         <div className="d-flex align-items-center">
                           <div
-                            className="bg-light rounded-circle me-2 d-flex align-items-center justify-content-center"
+                            className="rounded-circle me-2 d-flex align-items-center justify-content-center text-white fw-bold"
                             style={{
-                              width: "30px",
-                              height: "30px",
-                              fontSize: "0.8rem",
+                              width: "32px",
+                              height: "32px",
+                              fontSize: "0.75rem",
+                              backgroundColor: brandTeal,
                             }}
                           >
                             {truck.driver_info.name.charAt(0)}
                           </div>
-                          <span style={{ color: "#2B3674", fontWeight: "600" }}>
+                          <span
+                            style={{
+                              color: darkNavy,
+                              fontWeight: "600",
+                              fontSize: "0.9rem",
+                            }}
+                          >
                             {truck.driver_info.name}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-muted italic small">Vacant</span>
+                        <span
+                          className="badge bg-light text-muted fw-normal"
+                          style={{ borderRadius: "6px" }}
+                        >
+                          Not Assigned
+                        </span>
                       )}
                     </td>
-                    <td>
-                      <div className="small">
-                        <span className="text-muted">Last:</span>{" "}
-                        {truck.last_maintenance || "N/A"}
-                      </div>
-                      <div className="small">
-                        <span className="text-muted">Next:</span>{" "}
-                        <span className="text-primary fw-medium">
-                          {truck.next_due || "Not set"}
-                        </span>
-                      </div>
-                    </td>
+                    <td>{formatDateTime(truck.last_maintenance)}</td>
+                    <td>{formatDateTime(truck.next_due)}</td>
                     <td className="text-center">
                       <span style={styles.statusBadge(truck.status)}>
                         {truck.status === "onMaintenance"
-                          ? "In Service"
-                          : "Operational"}
+                          ? "MAINTENANCE"
+                          : truck.status === "isGood"
+                            ? "OPERATIONAL"
+                            : "OUT OF SERVICE"}
                       </span>
                     </td>
                     <td className="text-end">
@@ -320,8 +349,11 @@ function Trucks() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="text-center py-5 text-muted">
-                    No trucks found in the inventory.
+                  <td
+                    colSpan={6}
+                    className="text-center py-5 text-muted fw-bold"
+                  >
+                    No matching vehicles found.
                   </td>
                 </tr>
               )}
@@ -329,26 +361,24 @@ function Trucks() {
           </table>
         </div>
 
-        {/* --- PAGINATION CONTROLS --- */}
+        {/* Pagination */}
         {totalPages > 1 && (
           <div
             className="d-flex justify-content-between align-items-center mt-4 pt-3"
             style={{ borderTop: "1px solid #F4F7FE" }}
           >
             <div className="text-muted small fw-bold">
-              Showing {currentTrucks.length} of {filteredTrucks.length} trucks
+              Showing {currentTrucks.length} of {filteredTrucks.length} assets
             </div>
-
             <div className="d-flex gap-2">
               <button
-                className="btn btn-light shadow-sm"
+                className="btn btn-light"
                 style={styles.pageBtn(false)}
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
               >
                 <FaChevronLeft size={12} />
               </button>
-
               {[...Array(totalPages)].map((_, idx) => (
                 <button
                   key={idx}
@@ -358,9 +388,8 @@ function Trucks() {
                   {idx + 1}
                 </button>
               ))}
-
               <button
-                className="btn btn-light shadow-sm"
+                className="btn btn-light"
                 style={styles.pageBtn(false)}
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}

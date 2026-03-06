@@ -86,7 +86,7 @@ function EditDriver({ driver, handleEdit }) {
       color: "#2B3674",
     },
     primaryBtn: {
-      backgroundColor: "#4318FF",
+      backgroundColor: "#1a839a",
       border: "none",
       borderRadius: "12px",
       padding: "0.6rem 1.5rem",

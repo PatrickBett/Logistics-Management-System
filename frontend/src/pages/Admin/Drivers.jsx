@@ -59,14 +59,14 @@ function Drivers() {
       cursor: "pointer",
       fontWeight: "600",
       padding: "10px 20px",
-      color: isActive ? "#4318FF" : "#A3AED0",
-      borderBottom: isActive ? "3px solid #4318FF" : "3px solid transparent",
+      color: isActive ? "#1a839a" : "#A3AED0",
+      borderBottom: isActive ? "3px solid #1a839a" : "3px solid transparent",
       transition: "all 0.3s ease",
     }),
     statusBadge: (status) => {
       const colors = {
         onLeave: { bg: "#FFF5F5", text: "#EE5D50" },
-        onDuty: { bg: "#F0F7FF", text: "#4318FF" },
+        onDuty: { bg: "#F0F7FF", text: "#1a839a" },
         available: { bg: "#F0FFF4", text: "#05CD99" },
       };
       const style = colors[status] || colors.available;
@@ -90,7 +90,7 @@ function Drivers() {
     },
     pageBtn: (isActive) => ({
       borderRadius: "8px",
-      backgroundColor: isActive ? "#4318FF" : "#fff",
+      backgroundColor: isActive ? "#1a839a" : "#fff",
       color: isActive ? "#fff" : "#2B3674",
       border: "none",
       width: "35px",
@@ -140,13 +140,13 @@ function Drivers() {
           className="btn btn-primary px-4 shadow-sm"
           style={{
             borderRadius: "12px",
-            backgroundColor: "#4318FF",
+            backgroundColor: "#1a839a",
             border: "none",
           }}
           data-bs-toggle="modal"
           data-bs-target="#driver-modal"
         >
-          <FaPlus className="me-2" /> Add New Driver
+          <FaPlus className="me-2" /> Add Driver
         </button>
       </div>
 

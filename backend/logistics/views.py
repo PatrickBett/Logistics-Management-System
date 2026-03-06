@@ -12,6 +12,15 @@ from .permissions import isDriver, isAdmin
 from django.http import HttpResponse
 
 # Create your views here.
+class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+    permission_classes=[IsAuthenticated]
+class UserView(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes=[IsAuthenticated]
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

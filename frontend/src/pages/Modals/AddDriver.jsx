@@ -86,7 +86,7 @@ function AddDriver({ handleAddDriver }) {
       fontSize: "0.95rem",
     },
     saveBtn: {
-      backgroundColor: "#4318FF",
+      backgroundColor: "#1a839a",
       border: "none",
       borderRadius: "12px",
       padding: "10px 25px",

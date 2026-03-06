@@ -13,12 +13,14 @@ function UserDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
+  const brandTeal = "#1a839a";
+  const darkNavy = "#2B3674";
+
   const handleLogout = () => {
     try {
-      localStorage.clear(); // Clears access, refresh, role, etc.
+      localStorage.clear();
       toast.success("Logged out successfully");
       navigate("/");
-      // Force reload only if necessary to clear global state
       window.location.reload();
     } catch (e) {
       console.error("Logout error:", e);
@@ -33,13 +35,13 @@ function UserDashboardLayout() {
       display: "flex",
       height: "100vh",
       width: "100vw",
-      backgroundColor: "#F4F7FE", // Consistent background
+      backgroundColor: "#F4F7FE",
       overflow: "hidden",
     },
     sidebar: {
       width: sidebarOpen ? "280px" : "0px",
       minWidth: sidebarOpen ? "280px" : "0px",
-      backgroundColor: "#FFFFFF",
+      backgroundColor: "#E9EEF6",
       transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
       borderRight: "1px solid #E9EDF7",
       display: "flex",
@@ -52,7 +54,7 @@ function UserDashboardLayout() {
       borderBottom: "1px solid #F4F7FE",
     },
     logoText: {
-      color: "#2B3674",
+      color: darkNavy,
       fontWeight: "800",
       fontSize: "1.5rem",
       letterSpacing: "-1px",
@@ -71,18 +73,18 @@ function UserDashboardLayout() {
       borderRadius: "15px",
       fontSize: "0.95rem",
       fontWeight: isActive ? "700" : "500",
-      color: isActive ? "#4318FF" : "#A3AED0",
-      backgroundColor: isActive ? "#F4F7FE" : "transparent",
+      color: isActive ? brandTeal : "#A3AED0",
+      backgroundColor: isActive ? `${brandTeal}10` : "transparent", // 10% opacity teal
       transition: "all 0.25s ease",
       position: "relative",
     }),
     activeIndicator: {
       position: "absolute",
-      right: "0",
+      left: "0",
       height: "25px",
       width: "4px",
-      backgroundColor: "#4318FF",
-      borderRadius: "4px",
+      backgroundColor: brandTeal,
+      borderRadius: "0 4px 4px 0",
     },
     mainContent: {
       flexGrow: 1,
@@ -130,10 +132,18 @@ function UserDashboardLayout() {
       >
         <div style={styles.logoSection}>
           <h3 style={styles.logoText}>
-            FLEET<span style={{ color: "#4318FF" }}>PRO</span>
+            FLEET<span style={{ color: brandTeal }}>PRO</span>
           </h3>
-          <small style={{ color: "#A3AED0", fontWeight: "600" }}>
-            USER PANEL
+          <small
+            style={{
+              color: "#A3AED0",
+              fontWeight: "700",
+              textTransform: "uppercase",
+              fontSize: "0.65rem",
+              letterSpacing: "1px",
+            }}
+          >
+            Admin Portal
           </small>
         </div>
 
@@ -142,11 +152,11 @@ function UserDashboardLayout() {
             <NavLink key={item.path} to={item.path} style={styles.link}>
               {({ isActive }) => (
                 <>
+                  {isActive && <div style={styles.activeIndicator} />}
                   <span style={{ marginRight: "12px", fontSize: "1.2rem" }}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
-                  {isActive && <div style={styles.activeIndicator} />}
                 </>
               )}
             </NavLink>
@@ -154,7 +164,16 @@ function UserDashboardLayout() {
         </nav>
 
         <div style={styles.logoutSection}>
-          <button style={styles.logoutBtn} onClick={handleLogout}>
+          <button
+            style={styles.logoutBtn}
+            onClick={handleLogout}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#ffebeb")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#FFF5F5")
+            }
+          >
             <FaSignOutAlt className="me-2" />
             Logout
           </button>

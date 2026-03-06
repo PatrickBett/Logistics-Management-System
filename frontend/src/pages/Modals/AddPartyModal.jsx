@@ -10,6 +10,7 @@ import {
   MdBarChart,
   MdAttachMoney,
 } from "react-icons/md";
+import { withFilter } from "vite";
 
 function AddPartyModal() {
   const { setParties } = useContext(AdminContext);
@@ -64,7 +65,7 @@ function AddPartyModal() {
         status: "",
       });
     } catch (e) {
-      toast.error("Error adding party. Check connection.");
+      toast.error("Error adding party.");
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +102,7 @@ function AddPartyModal() {
       fontSize: "0.9rem",
     },
     saveBtn: {
-      backgroundColor: "#4318FF",
+      backgroundColor: "#1a839a",
       borderRadius: "12px",
       padding: "10px 25px",
       fontWeight: "600",
@@ -276,7 +277,7 @@ function AddPartyModal() {
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  
                   style={styles.saveBtn}
                   disabled={isLoading}
                 >

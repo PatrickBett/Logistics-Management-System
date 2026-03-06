@@ -1,16 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
-import {
-  MdSettings,
-  MdLocalShipping,
-  MdPerson,
-  MdBuild,
-  MdEvent,
-} from "react-icons/md";
+import { MdSettings, MdLocalShipping, MdPerson, MdBuild } from "react-icons/md";
 
 function EditTruck({ truck, handleEditTruck }) {
   const { drivers } = useContext(AdminContext);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const brandTeal = "#1a839a";
+  const darkNavy = "#2B3674";
 
   const [formData, setFormData] = useState({
     truckNo: "",
@@ -27,6 +24,7 @@ function EditTruck({ truck, handleEditTruck }) {
         truckNo: truck.truck_no || "",
         type: truck.type || "",
         driver: truck.driver || "",
+        // Formats the date string to YYYY-MM-DDTHH:MM for the input field
         lastMaintenance: truck.last_maintenance
           ? truck.last_maintenance.slice(0, 16)
           : "",
@@ -53,14 +51,13 @@ function EditTruck({ truck, handleEditTruck }) {
         next_due: formData.nextDue,
         status: formData.status,
       });
-      // Close modal logic is usually handled by Bootstrap data-attributes or a prop
     } finally {
       setIsUpdating(false);
     }
   };
 
   const styles = {
-    modalContent: { borderRadius: "20px", border: "none", overflow: "hidden" },
+    modalContent: { borderRadius: "24px", border: "none", overflow: "hidden" },
     header: {
       backgroundColor: "#F4F7FE",
       borderBottom: "none",
@@ -69,21 +66,32 @@ function EditTruck({ truck, handleEditTruck }) {
     label: {
       fontSize: "0.75rem",
       fontWeight: "700",
-      color: "#2B3674",
+      color: darkNavy,
       marginBottom: "8px",
       display: "block",
+      textTransform: "uppercase",
+      letterSpacing: "0.5px",
     },
     input: {
       borderRadius: "12px",
       border: "1px solid #E0E5F2",
       padding: "12px",
       fontSize: "0.95rem",
+      color: darkNavy,
     },
     maintenanceBox: {
-      backgroundColor: "#FFF8F1",
+      backgroundColor: "#E1F5F9", // Soft brand-teal tint
       borderRadius: "16px",
       padding: "20px",
-      border: "1px solid #FFE5D3",
+      border: `1px solid ${brandTeal}30`, // 30% opacity of brand teal
+    },
+    primaryBtn: {
+      borderRadius: "12px",
+      backgroundColor: brandTeal,
+      border: "none",
+      padding: "12px 24px",
+      fontWeight: "700",
+      boxShadow: `0px 10px 20px rgba(26, 131, 154, 0.2)`,
     },
   };
 
@@ -100,11 +108,14 @@ function EditTruck({ truck, handleEditTruck }) {
             className="modal-header d-flex align-items-center"
             style={styles.header}
           >
-            <div className="p-2 bg-warning rounded-3 text-white me-3 d-flex align-items-center justify-content-center">
+            <div
+              className="p-2 rounded-3 text-white me-3 d-flex align-items-center justify-content-center"
+              style={{ backgroundColor: brandTeal }}
+            >
               <MdSettings size={24} />
             </div>
-            <h5 className="modal-title fw-bold" style={{ color: "#2B3674" }}>
-              Asset Configuration
+            <h5 className="modal-title fw-bold" style={{ color: darkNavy }}>
+              Truck Management
             </h5>
             <button
               type="button"
@@ -169,40 +180,34 @@ function EditTruck({ truck, handleEditTruck }) {
 
               <div style={styles.maintenanceBox} className="mb-4">
                 <div className="d-flex align-items-center mb-3">
-                  <MdBuild className="text-warning me-2" />
-                  <span className="fw-bold text-warning-emphasis small">
-                    MAINTENANCE SCHEDULE
+                  <MdBuild style={{ color: brandTeal }} className="me-2" />
+                  <span className="fw-bold small" style={{ color: brandTeal }}>
+                    MAINTENANCE LOGS
                   </span>
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3 mb-md-0">
-                    <label style={{ ...styles.label, color: "#8B4513" }}>
+                    <label style={{ ...styles.label, color: brandTeal }}>
                       Last Checkup
                     </label>
                     <input
                       name="lastMaintenance"
                       type="datetime-local"
-                      className="form-control"
-                      style={{
-                        ...styles.input,
-                        backgroundColor: "rgba(255,255,255,0.6)",
-                      }}
+                      className="form-control border-0 shadow-sm"
+                      style={styles.input}
                       value={formData.lastMaintenance}
                       onChange={handleChange}
                     />
                   </div>
                   <div className="col-md-6">
-                    <label style={{ ...styles.label, color: "#8B4513" }}>
+                    <label style={{ ...styles.label, color: brandTeal }}>
                       Service Due
                     </label>
                     <input
                       name="nextDue"
                       type="datetime-local"
-                      className="form-control"
-                      style={{
-                        ...styles.input,
-                        backgroundColor: "rgba(255,255,255,0.6)",
-                      }}
+                      className="form-control border-0 shadow-sm"
+                      style={styles.input}
                       value={formData.nextDue}
                       onChange={handleChange}
                     />
@@ -234,20 +239,16 @@ function EditTruck({ truck, handleEditTruck }) {
               data-bs-dismiss="modal"
               style={{ borderRadius: "12px", color: "#A3AED0" }}
             >
-              Dismiss
+              Cancel
             </button>
             <button
               type="button"
               className="btn btn-primary px-4 fw-bold shadow"
-              style={{
-                borderRadius: "12px",
-                backgroundColor: "#4318FF",
-                border: "none",
-              }}
+              style={styles.primaryBtn}
               onClick={onUpdate}
               disabled={isUpdating}
             >
-              {isUpdating ? "Syncing..." : "Apply Changes"}
+              {isUpdating ? "Saving..." : "Apply Changes"}
             </button>
           </div>
         </div>

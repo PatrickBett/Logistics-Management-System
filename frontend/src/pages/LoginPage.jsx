@@ -38,10 +38,10 @@ function LoginPage() {
       } else {
         navigate("/user/dashboard");
       }
-      toast.success("Welcome Back!");
+      toast.success("LogIn Success!");
     } catch (err) {
       setError("Invalid username or password.");
-      toast.error("Login Failed");
+      // toast.error("Login Failed");
     } finally {
       setLoading(false);
     }

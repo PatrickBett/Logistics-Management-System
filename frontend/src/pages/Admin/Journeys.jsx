@@ -2,7 +2,6 @@ import React, { useContext, useMemo, useState } from "react";
 import {
   FaPlus,
   FaSearch,
-  FaFileDownload,
   FaRoute,
   FaChevronLeft,
   FaChevronRight,
@@ -24,12 +23,23 @@ function Journeys() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
-
-  // --- PAGINATION STATE ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; // Adjust this number as needed
+  const itemsPerPage = 8;
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  // --- BRAND COLORS ---
+  const brandTeal = "#1a839a";
+  const darkNavy = "#2B3674";
+
+  // --- DATE FORMATTER (DATE ONLY) ---
+  const formatDateOnly = (dateStr) => {
+    if (!dateStr) return "N/A";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   const styles = {
     container: {
@@ -37,7 +47,7 @@ function Journeys() {
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },
-    headerText: { color: "#2B3674", fontWeight: "700", fontSize: "1.75rem" },
+    headerText: { color: darkNavy, fontWeight: "700", fontSize: "1.75rem" },
     searchWrapper: { position: "relative", maxWidth: "400px", width: "100%" },
     searchInput: {
       borderRadius: "30px",
@@ -58,15 +68,17 @@ function Journeys() {
       fontWeight: "600",
       padding: "10px 15px",
       fontSize: "0.85rem",
-      color: isActive ? "#4318FF" : "#A3AED0",
-      borderBottom: isActive ? "3px solid #4318FF" : "3px solid transparent",
+      color: isActive ? brandTeal : "#A3AED0",
+      borderBottom: isActive
+        ? `3px solid ${brandTeal}`
+        : "3px solid transparent",
       transition: "all 0.3s ease",
     }),
     statusBadge: (status) => {
       const config = {
-        delivered: { bg: "#F0FFF4", text: "#05CD99" },
+        delivered: { bg: "#E6F6F4", text: "#05CD99" },
         inprogress: { bg: "#FFF8E6", text: "#FFB547" },
-        shipping: { bg: "#F0F7FF", text: "#4318FF" },
+        shipping: { bg: "#F0F7FF", text: brandTeal },
         cancelled: { bg: "#FFF5F5", text: "#EE5D50" },
       };
       const style = config[status] || config.inprogress;
@@ -75,9 +87,10 @@ function Journeys() {
         color: style.text,
         padding: "5px 12px",
         borderRadius: "20px",
-        fontSize: "0.75rem",
+        fontSize: "0.72rem",
         fontWeight: "700",
-        textTransform: "capitalize",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
       };
     },
     pageButton: (isActive) => ({
@@ -89,7 +102,7 @@ function Journeys() {
       borderRadius: "10px",
       margin: "0 4px",
       border: "none",
-      backgroundColor: isActive ? "#4318FF" : "transparent",
+      backgroundColor: isActive ? brandTeal : "transparent",
       color: isActive ? "#fff" : "#A3AED0",
       fontWeight: "600",
       transition: "0.2s",
@@ -98,7 +111,6 @@ function Journeys() {
 
   // --- FILTER & SEARCH LOGIC ---
   const filteredJourneys = useMemo(() => {
-    setCurrentPage(1); // Reset to page 1 whenever filter or search changes
     const query = searchQuery.toLowerCase();
     return journeys
       .filter((j) => {
@@ -114,7 +126,7 @@ function Journeys() {
       .filter((j) => filter === "all" || j.status === filter);
   }, [journeys, searchQuery, filter]);
 
-  // --- PAGINATION CALCULATIONS ---
+  // --- PAGINATION ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredJourneys.slice(
@@ -123,24 +135,21 @@ function Journeys() {
   );
   const totalPages = Math.ceil(filteredJourneys.length / itemsPerPage);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   return (
     <div style={styles.container}>
-      {/* Header logic same as before... */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 style={styles.headerText}>Journeys & Logistics</h2>
+          <h2 style={styles.headerText}>Logistics Tracker</h2>
           <p className="text-muted small mb-0">
-            Track real-time trip status and delivery routes
+            Monitor active routes and trip history
           </p>
         </div>
         {role === "admin" && (
           <button
-            className="btn btn-primary px-4 d-flex align-items-center shadow-sm"
+            className="btn text-white px-4 d-flex align-items-center shadow-sm"
             style={{
               borderRadius: "12px",
-              backgroundColor: "#4318FF",
+              backgroundColor: brandTeal,
               border: "none",
               height: "45px",
             }}
@@ -152,7 +161,6 @@ function Journeys() {
         )}
       </div>
 
-      {/* Tabs and Search logic same as before... */}
       <div className="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
         <div style={styles.searchWrapper}>
           <FaSearch
@@ -169,15 +177,21 @@ function Journeys() {
             style={styles.searchInput}
             placeholder="Search driver, truck, or client..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
           />
         </div>
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-1">
           {["all", "inprogress", "shipping", "delivered", "cancelled"].map(
             (type) => (
               <div
                 key={type}
-                onClick={() => setFilter(type)}
+                onClick={() => {
+                  setFilter(type);
+                  setCurrentPage(1);
+                }}
                 style={styles.tab(filter === type)}
               >
                 {type === "all"
@@ -191,11 +205,9 @@ function Journeys() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div style={styles.tableCard}>
         <div className="table-responsive">
           <table className="table align-middle">
-            {/* Table thead same as before... */}
             <thead>
               <tr
                 style={{
@@ -205,11 +217,11 @@ function Journeys() {
                   letterSpacing: "1px",
                 }}
               >
-                <th className="border-0 pb-3">Trip Details</th>
-                <th className="border-0 pb-3">Driver & Truck</th>
-                <th className="border-0 pb-3">Route</th>
-                <th className="border-0 pb-3 text-center">Status</th>
-                <th className="border-0 pb-3 text-end">Action</th>
+                <th className="border-0 pb-3">Client & Date</th>
+                <th className="border-0 pb-3">Operator / Asset</th>
+                <th className="border-0 pb-3">Route Path</th>
+                <th className="border-0 pb-3 text-center">Current Status</th>
+                <th className="border-0 pb-3 text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -220,15 +232,17 @@ function Journeys() {
                     style={{ borderBottom: "1px solid #F4F7FE" }}
                   >
                     <td className="py-3">
-                      <div className="fw-bold" style={{ color: "#2B3674" }}>
+                      <div className="fw-bold" style={{ color: darkNavy }}>
                         {journey.party_info?.name || "Private Trip"}
                       </div>
-                      <div className="text-muted small">{journey.date}</div>
+                      <div className="text-muted small fw-medium">
+                        {formatDateOnly(journey.date)}
+                      </div>
                     </td>
                     <td>
                       <div
                         className="fw-bold"
-                        style={{ color: "#2B3674", fontSize: "0.9rem" }}
+                        style={{ color: darkNavy, fontSize: "0.9rem" }}
                       >
                         {journey.driver_info?.name || "N/A"}
                       </div>
@@ -239,10 +253,13 @@ function Journeys() {
                     <td>
                       <div
                         className="d-flex align-items-center small fw-bold"
-                        style={{ color: "#2B3674" }}
+                        style={{ color: darkNavy }}
                       >
-                        {journey.startingpoint}{" "}
-                        <FaRoute className="mx-2 text-muted" />{" "}
+                        {journey.startingpoint}
+                        <FaRoute
+                          className="mx-2"
+                          style={{ color: brandTeal, opacity: 0.6 }}
+                        />
                         {journey.destination}
                       </div>
                     </td>
@@ -253,28 +270,31 @@ function Journeys() {
                     </td>
                     <td className="text-end">
                       <button
-                        className="btn btn-sm me-2"
-                        style={{ color: "#4318FF" }}
+                        className="btn btn-sm me-1"
+                        style={{ color: brandTeal }}
                         onClick={() => setEditingJourney(journey)}
                         data-bs-toggle="modal"
                         data-bs-target="#edit-journey-modal"
                       >
-                        <MdModeEdit size={18} />
+                        <MdModeEdit size={20} />
                       </button>
                       <button
                         className="btn btn-sm"
                         style={{ color: "#EE5D50" }}
                         onClick={() => handleDeleteJourney(journey.id)}
                       >
-                        <MdDelete size={18} />
+                        <MdDelete size={20} />
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="text-center py-5 text-muted">
-                    No journeys found.
+                  <td
+                    colSpan={5}
+                    className="text-center py-5 text-muted fw-bold"
+                  >
+                    No journey logs found.
                   </td>
                 </tr>
               )}
@@ -282,41 +302,36 @@ function Journeys() {
           </table>
         </div>
 
-        {/* --- PAGINATION FOOTER --- */}
         {totalPages > 1 && (
           <div className="d-flex justify-content-between align-items-center mt-4">
-            <div className="text-muted small">
+            <div className="text-muted small fw-bold">
               Showing {indexOfFirstItem + 1} to{" "}
               {Math.min(indexOfLastItem, filteredJourneys.length)} of{" "}
-              {filteredJourneys.length} entries
+              {filteredJourneys.length}
             </div>
             <div className="d-flex align-items-center">
               <button
                 className="btn btn-sm"
                 disabled={currentPage === 1}
-                onClick={() => paginate(currentPage - 1)}
-                style={{ color: "#A3AED0" }}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
               >
-                <FaChevronLeft />
+                <FaChevronLeft style={{ color: "#A3AED0" }} />
               </button>
-
               {[...Array(totalPages)].map((_, i) => (
                 <button
-                  key={i + 1}
-                  onClick={() => paginate(i + 1)}
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
                   style={styles.pageButton(currentPage === i + 1)}
                 >
                   {i + 1}
                 </button>
               ))}
-
               <button
                 className="btn btn-sm"
                 disabled={currentPage === totalPages}
-                onClick={() => paginate(currentPage + 1)}
-                style={{ color: "#A3AED0" }}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
               >
-                <FaChevronRight />
+                <FaChevronRight style={{ color: "#A3AED0" }} />
               </button>
             </div>
           </div>

@@ -57,8 +57,8 @@ function Parties() {
       cursor: "pointer",
       fontWeight: "600",
       padding: "10px 20px",
-      color: isActive ? "#4318FF" : "#A3AED0",
-      borderBottom: isActive ? "3px solid #4318FF" : "3px solid transparent",
+      color: isActive ? "#1a839a" : "#A3AED0",
+      borderBottom: isActive ? "3px solid #1a839a" : "3px solid transparent",
       transition: "all 0.3s ease",
     }),
     statusBadge: (isActive) => ({
@@ -128,7 +128,7 @@ function Parties() {
           className="btn btn-primary px-4 d-flex align-items-center shadow-sm"
           style={{
             borderRadius: "12px",
-            backgroundColor: "#4318FF",
+            backgroundColor: "#1a839a",
             border: "none",
             height: "45px",
           }}
@@ -224,7 +224,7 @@ function Parties() {
                           className="p-2 rounded-3 me-3"
                           style={{
                             backgroundColor: "#F4F7FE",
-                            color: "#4318FF",
+                            color: "#1a839a",
                           }}
                         >
                           <MdBusinessCenter size={20} />
@@ -266,7 +266,7 @@ function Parties() {
                           className="progress-bar"
                           style={{
                             width: `${(party.voltransported / party.total_vol) * 100}%`,
-                            backgroundColor: "#4318FF",
+                            backgroundColor: "#1a839a",
                           }}
                         />
                       </div>

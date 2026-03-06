@@ -40,7 +40,7 @@ function AdminDashboard() {
     sidebar: {
       width: sidebarOpen ? "280px" : "0px",
       minWidth: sidebarOpen ? "280px" : "0px",
-      backgroundColor: "#FFFFFF",
+      backgroundColor: "#E9EEF6",
       transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
       borderRight: "1px solid #E9EDF7",
       display: "flex",
@@ -74,7 +74,7 @@ function AdminDashboard() {
       borderRadius: "15px",
       fontSize: "0.95rem",
       fontWeight: isActive ? "700" : "500",
-      color: isActive ? "#4318FF" : "#A3AED0",
+      color: isActive ? "#1a839a" : "#A3AED0",
       backgroundColor: isActive ? "#F4F7FE" : "transparent",
       transition: "all 0.25s ease",
       position: "relative",
@@ -84,7 +84,7 @@ function AdminDashboard() {
       right: "0",
       height: "25px",
       width: "4px",
-      backgroundColor: "#4318FF",
+      backgroundColor: "#1a839a",
       borderRadius: "4px",
     },
     mainContent: {
@@ -134,7 +134,7 @@ function AdminDashboard() {
       <aside style={styles.sidebar}>
         <div style={styles.logoSection}>
           <h3 style={styles.logoText}>
-            FLEET<span style={{ color: "#4318FF" }}>PRO</span>
+            FLEET<span style={{ color: "#1a839a" }}>PRO</span>
           </h3>
           <small style={{ color: "#A3AED0", fontWeight: "600" }}>
             ADMIN CONSOLE

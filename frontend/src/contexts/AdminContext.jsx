@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useMemo } from "react";
 import api from "../api";
 import { toast } from "react-toastify";
 import EditParty from "../pages/Modals/EditParty";
+
 export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {

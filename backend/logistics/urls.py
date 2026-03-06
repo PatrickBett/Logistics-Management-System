@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (DriverListCreateView, TruckListCreateView, 
                     DriverRegisterView, RegisterView,
+                    UserRetrieveUpdateView,UserView,
                     JourneyListCreateView, PartyListCreateView, 
                     DriverRetrieveUpdateDestroyView,TruckRetrieveUpdateDestroyView,
                     PartyRetrieveUpdateDestroyView,JourneyRetrieveUpdateDestroyView,JourneyUpdateStatusView,
@@ -13,6 +14,8 @@ urlpatterns = [
 
     path('user/register/', RegisterView.as_view(), name='user-register-view'),
     path('token/', CustomTokenObtainPairView.as_view(), name='custom-view'),
+    path('users/', UserView.as_view(), name='users'),
+    path('users/<int:id>/', UserRetrieveUpdateView.as_view(), name='user-update-view'),
 
     path('drivers/', DriverListCreateView.as_view(), name='driver-list-create'),
     path('drivers/<uuid:pk>/', DriverRetrieveUpdateDestroyView.as_view(), name='driver-retrieve-update-destroy'),
