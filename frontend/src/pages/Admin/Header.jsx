@@ -219,7 +219,9 @@ function Header({ onToggleSidebar, sidebarOpen }) {
               >
                 Update Profile
               </button>
+              
             </div>
+
           )}
         </div>
       </div>
