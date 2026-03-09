@@ -10,7 +10,6 @@ import {
   MdBarChart,
   MdAttachMoney,
 } from "react-icons/md";
-import { withFilter } from "vite";
 
 function AddPartyModal() {
   const { setParties } = useContext(AdminContext);
@@ -277,7 +276,6 @@ function AddPartyModal() {
                 </button>
                 <button
                   type="submit"
-                  
                   style={styles.saveBtn}
                   disabled={isLoading}
                 >
