@@ -160,6 +160,10 @@ USE_TZ = True
 #CELERY_BROKER_URL = 'redis://localhost:6379/0'
 # CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_BROKER_USE_SSL = {
+    'ssl_cert_reqs': False  # or use 'CERT_REQUIRED' with proper certs in production
+}
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
