@@ -193,14 +193,14 @@ function UserDashboardLayout() {
 
         <div style={{ flexGrow: 1, padding: "1.5rem", overflowY: "auto" }}>
           {/* Page Context Heading */}
-          <div style={{ marginBottom: "1.5rem" }}>
+          {/* <div style={{ marginBottom: "1.5rem" }}>
             <h2
               style={{ color: darkNavy, fontWeight: "700", fontSize: "1.6rem" }}
             >
               {menuItems.find((i) => i.path === location.pathname)?.label ||
                 "Welcome Back"}
             </h2>
-          </div>
+          </div> */}
 
           <Outlet />
         </div>
