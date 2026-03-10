@@ -5,3 +5,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
