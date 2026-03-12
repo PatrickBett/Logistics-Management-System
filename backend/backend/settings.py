@@ -102,6 +102,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 CORS_ORIGIN_WHITELIST = [
      'http://localhost:5173',
      'https://logisticsmanagementsystem.netlify.app',  
+     'https://logistics-management-system-9kbs.onrender.com',
 ]
 
 # Database
@@ -200,6 +201,7 @@ ASGI_APPLICATION = "backend.asgi.application"
 
 CSRF_TRUSTED_ORIGINS = [
     "https://logisticsmanagementsystem.netlify.app",
+    'https://logistics-management-system-9kbs.onrender.com',
     "http://localhost:5173",
     # "http://127.0.0.1:5173",
 ]
