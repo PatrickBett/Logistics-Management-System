@@ -20,7 +20,7 @@ function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const response = await api.post("api/token/", formData);
+      const response = await api.post("https://logistics-management-system-9kbs.onrender.com/api/token/", formData);
       const { access, refresh } = response.data;
 
       localStorage.setItem("access", access);
