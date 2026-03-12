@@ -17,7 +17,7 @@ export const AdminProvider = ({ children }) => {
   const [trucks, setTrucks] = useState([]);
   const [journeys, setJourneys] = useState([]);
   const [selectedStatus, setselectedStatus] = useState("All");
-  // const [driversonleave, setDriversOnLeave] = useState("")
+  // const [driversonleave, setDriversOnLeave] = useState("");
 
   const token = localStorage.getItem("access")
   useEffect(()=>{

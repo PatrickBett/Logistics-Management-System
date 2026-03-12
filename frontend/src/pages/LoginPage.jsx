@@ -20,7 +20,7 @@ function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const response = await api.post("/api/token/", formData);
+      const response = await api.post("api/token/", formData);
       const { access, refresh } = response.data;
 
       localStorage.setItem("access", access);
