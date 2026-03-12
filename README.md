@@ -1,4 +1,6 @@
-# Logistics Management System.
+# Logistics Management System. 
+To access it: 
+https://logisticsmanagementsystem.netlify.app/
 
 A role-based logistics management platform built with React (frontend) and Django + Django REST Framework (backend). The system allows logistics companies to manage drivers, trucks, journeys, and clients efficiently from a centralized dashboard.
 
