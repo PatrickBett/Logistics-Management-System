@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Starting Celery worker..."
-celery -A backend worker -l info &
+celery -A backend worker --concurrency=1 -l info &
 
 echo "Starting Celery beat..."
 celery -A backend beat -l info &
