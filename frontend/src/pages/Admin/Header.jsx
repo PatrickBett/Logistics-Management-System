@@ -34,23 +34,15 @@ function Header({ onToggleSidebar, sidebarOpen }) {
     ws.onopen = () => {
       console.log("Notifications WebSocket connected");
     };
-
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
-      setNotifications((prev) => [...prev, data]);
-      setUnreadCount((prev) => prev + 1);
+      console.log("Done nots");
+      setNotifications("Done notifications");
     };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
+    ws.onclose = () => console.log("Notifications Websocket closed");
+    return () => {
+      ws.close();
     };
-
-    ws.onclose = () => {
-      console.log("Notifications WebSocket closed");
-    };
-
-    return () => ws.close();
   }, []);
 
   // Close dropdown when clicking outside
