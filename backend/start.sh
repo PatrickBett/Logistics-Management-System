@@ -1,4 +1,9 @@
 #!/bin/sh
+echo "Applying database migrations..."
+python manage.py migrate --noinput
+
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
 
 echo "Starting Celery worker..."
 celery -A backend worker --concurrency=1 -l info &
