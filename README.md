@@ -31,5 +31,5 @@ This dashboard is intended for internal administrative use.
 # This starts Celery Beat, the scheduler
 celery -A backend beat --loglevel=info
 
-# To Start a Celery worker process
+# To Start a Celery worker process.
 celery -A backend worker -l info
