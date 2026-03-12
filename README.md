@@ -1,4 +1,5 @@
 # Logistics Management System.
+
 A role-based logistics management platform built with React (frontend) and Django + Django REST Framework (backend). The system allows logistics companies to manage drivers, trucks, journeys, and clients efficiently from a centralized dashboard.
 
 The platform provides separate interfaces for administrators and drivers, enabling operational visibility, better fleet management, and improved communication

@@ -4,13 +4,19 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
-import { FaTruck, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
+import { FaTruck, FaEye, FaEyeSlash, FaInfoCircle } from "react-icons/fa"; // Added FaInfoCircle
 import { AdminContext } from "../contexts/AdminContext";
 
 function LoginPage() {
   const { setIsAuthenticated } = useContext(AdminContext);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: "", password: "" });
+
+  // Pre-filled with your test credentials
+  const [formData, setFormData] = useState({
+    username: "LogisticsMS",
+    password: "123456789",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -41,13 +47,11 @@ function LoginPage() {
       toast.success("LogIn Success!");
     } catch (err) {
       setError("Invalid username or password.");
-      // toast.error("Login Failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // --- BRAND COLOR THEME ---
   const brandTeal = "#1a839a";
   const darkNavy = "#2B3674";
 
@@ -111,11 +115,20 @@ function LoginPage() {
       marginTop: "1.5rem",
       boxShadow: `0px 10px 20px rgba(26, 131, 154, 0.2)`,
     },
+    // Style for the new Test Credentials box
+    testBox: {
+      marginTop: "2rem",
+      padding: "1rem",
+      backgroundColor: "#E6F4F7",
+      borderRadius: "12px",
+      border: `1px dashed ${brandTeal}`,
+      color: darkNavy,
+      fontSize: "0.85rem",
+    },
   };
 
   return (
     <div style={styles.container}>
-      {/* Visual Branding Side */}
       <div style={styles.imageSection} className="d-none d-lg-flex">
         <FaTruck style={{ fontSize: "5rem", marginBottom: "1.5rem" }} />
         <h1
@@ -150,7 +163,6 @@ function LoginPage() {
         </p>
       </div>
 
-      {/* Login Interaction Side */}
       <div style={styles.formSection}>
         <div style={styles.card}>
           <div className="text-center mb-4 d-lg-none">
@@ -177,6 +189,24 @@ function LoginPage() {
             Enter your credentials to continue
           </p>
 
+          {/* TEST CREDENTIALS BOX */}
+          <div style={styles.testBox}>
+            <div
+              className="d-flex align-items-center mb-1"
+              style={{ fontWeight: "700", color: brandTeal }}
+            >
+              <FaInfoCircle className="me-2" /> Admin Test Access
+            </div>
+            <div className="d-flex justify-content-between">
+              <span>
+                User: <strong>LogisticsMS</strong>
+              </span>
+              <span>
+                Pass: <strong>123456789</strong>
+              </span>
+            </div>
+          </div>
+
           <form onSubmit={handleLogin}>
             {error && (
               <div
@@ -197,7 +227,7 @@ function LoginPage() {
                 type="text"
                 className="form-control"
                 style={styles.input}
-                placeholder="Enter username"
+                value={formData.username}
                 required
                 onChange={(e) =>
                   setFormData({ ...formData, username: e.target.value })
@@ -212,7 +242,7 @@ function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   className="form-control"
                   style={styles.input}
-                  placeholder="Enter password"
+                  value={formData.password}
                   required
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
@@ -234,48 +264,16 @@ function LoginPage() {
               </div>
             </div>
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="remember"
-                  style={{ cursor: "pointer" }}
-                />
-                <label
-                  className="form-check-label small text-muted"
-                  htmlFor="remember"
-                  style={{ cursor: "pointer" }}
-                >
-                  Remember me
-                </label>
-              </div>
-              <a
-                href="#"
-                className="small text-decoration-none"
-                style={{ color: brandTeal, fontWeight: "600" }}
-              >
-                Forgot Password?
-              </a>
-            </div>
-
             <button
               type="submit"
               className="btn btn-primary w-100 shadow-sm"
               style={styles.primaryBtn}
               disabled={isLoading}
             >
-              {isLoading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2"></span>
-                  Authenticating...
-                </>
-              ) : (
-                "Sign In"
-              )}
+              {isLoading ? "Authenticating..." : "Sign In"}
             </button>
 
-            <p className="mt-4 text-center text-muted small fontWeight-500">
+            <p className="mt-4 text-center text-muted small">
               Not registered yet?{" "}
               <a
                 href="/register"
