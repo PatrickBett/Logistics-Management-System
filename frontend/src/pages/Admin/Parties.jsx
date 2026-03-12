@@ -33,7 +33,7 @@ function Parties() {
   // --- CUSTOM STYLES ---
   const styles = {
     container: {
-      padding: "1.5rem",
+      // padding: "1.5rem",
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
     },

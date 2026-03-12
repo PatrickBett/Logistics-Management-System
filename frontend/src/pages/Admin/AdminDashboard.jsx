@@ -195,7 +195,7 @@ function AdminDashboard() {
 
         <div style={{ flexGrow: 1, padding: "1.5rem", overflowY: "auto" }}>
           {/* Internal Page Title (Optional) */}
-          <div style={{ marginBottom: "1.5rem" }}>
+          {/* <div style={{ marginBottom: "1.5rem" }}>
             <h2
               style={{
                 color: "#2B3674",
@@ -206,7 +206,7 @@ function AdminDashboard() {
               {menuItems.find((i) => i.path === location.pathname)?.label ||
                 "Dashboard"}
             </h2>
-          </div>
+          </div> */}
 
           <Outlet />
         </div>
