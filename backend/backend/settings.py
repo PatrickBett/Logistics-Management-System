@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 CORS_ORIGIN_WHITELIST = [
      'http://localhost:5173',
-     'https://logistics-management-system-9kbs.onrender.com/',   
+     'https://logisticsmanagementsystem.netlify.app/'   
 ]
 
 # Database
