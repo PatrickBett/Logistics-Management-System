@@ -199,7 +199,7 @@ AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")
 ASGI_APPLICATION = "backend.asgi.application"
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://logisticsmanagementsystem.netlify.app/",
+    "https://logisticsmanagementsystem.netlify.app",
     "http://localhost:5173",
     # "http://127.0.0.1:5173",
 ]
