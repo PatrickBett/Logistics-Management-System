@@ -26,25 +26,6 @@ function Header({ onToggleSidebar, sidebarOpen }) {
   const dec = access ? jwtDecode(access) : null;
   const username = dec?.username || "Driver";
 
-  useEffect(() => {
-    const ws = new WebSocket(
-      `wss://logistics-management-system-9kbs.onrender.com/ws/notifications/`,
-    );
-
-    ws.onopen = () => {
-      console.log("Notifications WebSocket connected");
-    };
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Done nots");
-      setNotifications("Done notifications");
-    };
-    ws.onclose = () => console.log("Notifications Websocket closed");
-    return () => {
-      ws.close();
-    };
-  }, []);
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
