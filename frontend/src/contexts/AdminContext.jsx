@@ -21,7 +21,7 @@ export const AdminProvider = ({ children }) => {
 
   const token = localStorage.getItem("access")
   useEffect(()=>{
-    const ws = new WebSocket(`ws://localhost:8000/ws/drivers/`)
+    const ws = new WebSocket(`wss://logistics-management-system-9kbs.onrender.com/ws/drivers/`)
 
      ws.onopen = () => {
       console.log("Driver WebSocket connected");
