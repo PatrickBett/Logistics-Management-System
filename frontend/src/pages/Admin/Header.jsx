@@ -42,7 +42,7 @@ function Header({ onToggleSidebar, sidebarOpen }) {
     };
 
     ws.onclose = () => {
-      console.log("Notifications WebSocket closed");
+      console.log("Notifications WebSocket closedd");
     };
 
     return () => ws.close();
