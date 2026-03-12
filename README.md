@@ -25,6 +25,14 @@ Drivers can register on the site only after added by the admin as one of the com
 
 3. Notification: Africastalking API
 
+## Login Page
+
+![alt text](image-10.png)
+
+## RegisterPage
+
+![alt text](image-11.png)
+
 This dashboard is intended for internal administrative use.
 ![alt text](image-1.png)
 
