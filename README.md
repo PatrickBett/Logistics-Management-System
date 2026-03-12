@@ -2,7 +2,7 @@
 A role-based logistics management platform built with React (frontend) and Django + Django REST Framework (backend). The system allows logistics companies to manage drivers, trucks, journeys, and clients efficiently from a centralized dashboard.
 
 The platform provides separate interfaces for administrators and drivers, enabling operational visibility, better fleet management, and improved communication
-Administrators can:
+### Administrators can:
 
 1. Manage drivers and fleet resources
 
@@ -14,7 +14,7 @@ Administrators can:
 
 5. Schedule meetings with drivers
 
-Drivers can:
+### Drivers can:
 
 1. Access their personal dashboard
 
@@ -22,7 +22,7 @@ Drivers can:
 
 3. Monitor assigned journeys
 
-Driver registration is restricted — drivers can only register after being added by an administrator, ensuring controlled system access.
+Driver registration is restricted — **drivers can only register after being added by an administrator**, ensuring controlled system access.
 
 ## Features
 
