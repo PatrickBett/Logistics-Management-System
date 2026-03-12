@@ -27,7 +27,7 @@ function Dashboard() {
     dashboardWrapper: {
       backgroundColor: "#f4f7fe",
       minHeight: "100vh",
-      padding: "2rem",
+      // padding: "2rem",
       fontFamily: "'Inter', sans-serif",
     },
     mainTitle: {

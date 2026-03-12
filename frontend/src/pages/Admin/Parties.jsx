@@ -182,6 +182,11 @@ function Parties() {
           ))}
           <button
             className="btn btn-link text-muted text-decoration-none small ms-3"
+            style={{
+              border: "1px solid #1a839a",
+              color: "#1a839a",
+              backgroundColor: "transparent",
+            }}
             onClick={() =>
               (window.location.href = `${API_BASE_URL}/api/parties/download_csv/`)
             }

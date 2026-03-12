@@ -189,8 +189,12 @@ function Drivers() {
         </div>
 
         <button
-          className="btn btn-outline-secondary"
-          style={{ borderRadius: "12px", fontSize: "0.9rem" }}
+          className="btn"
+          style={{
+            border: "1px solid #1a839a",
+            color: "#1a839a",
+            backgroundColor: "transparent",
+          }}
           onClick={() =>
             (window.location.href = `${API_BASE_URL}/api/drivers/download_csv/`)
           }

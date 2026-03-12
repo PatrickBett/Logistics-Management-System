@@ -227,7 +227,12 @@ function Trucks() {
                 </div>
               ))}
               <button
-                className="btn btn-link text-decoration-none text-muted small ms-3"
+                style={{
+                  border: "1px solid #1a839a",
+                  color: "#1a839a",
+                  backgroundColor: "transparent",
+                }}
+                className="btn text-decoration-none text-muted small ms-3"
                 onClick={() =>
                   (window.location.href = `${API_BASE_URL}api/trucks/download_csv/`)
                 }
