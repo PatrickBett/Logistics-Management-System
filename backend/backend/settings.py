@@ -9,7 +9,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'..
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+REDIS_URL = os.getenv("REDIS_URL")
 # Quick-start development settings - unsuitable for production
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l77%qmn&*^@t%m9*)fd(qew2^(md_a^8!#4ekz+@&+y-31)&44'
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -68,9 +69,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [
-                "rediss://default:PASSWORD@charmed-gar-66500.upstash.io:6379"
-            ],
+            "hosts": [REDIS_URL],
         },
     },
 }
@@ -162,7 +161,7 @@ USE_TZ = True
 
 #CELERY_BROKER_URL = 'redis://localhost:6379/0'
 # CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_BROKER_URL = REDIS_URL
 CELERY_BROKER_USE_SSL = {
     'ssl_cert_reqs': False  # or use 'CERT_REQUIRED' with proper certs in production
 }
