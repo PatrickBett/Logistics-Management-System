@@ -183,7 +183,10 @@ function Journeys() {
             }}
           />
         </div>
-        <div className="d-flex align-items-center gap-1">
+        <div
+          className="d-flex align-items-center gap-1"
+          style={{ overflowX: "auto", whiteSpace: "nowrap" }}
+        >
           {["all", "inprogress", "shipping", "delivered", "cancelled"].map(
             (type) => (
               <div

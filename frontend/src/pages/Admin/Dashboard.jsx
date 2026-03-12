@@ -80,7 +80,7 @@ function Dashboard() {
   return (
     <div style={styles.dashboardWrapper}>
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-5">
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 style={styles.mainTitle}>Logistics Overview</h2>
         <div className="text-muted small fw-medium">
           {new Date().toLocaleDateString("en-US", {

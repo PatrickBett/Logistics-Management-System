@@ -167,7 +167,10 @@ function Drivers() {
           />
         </div>
 
-        <div className="d-flex gap-2">
+        <div
+          className="d-flex gap-2"
+          style={{ overflowX: "auto", whiteSpace: "nowrap" }}
+        >
           {["all", "onLeave", "available", "onduty"].map((type) => (
             <div
               key={type}
