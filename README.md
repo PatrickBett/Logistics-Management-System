@@ -32,24 +32,24 @@ Drivers can register on the site only after added by the admin as one of the com
 ## RegisterPage
 
 ![alt text](image-11.png)
-
+## Admin Dashboard
 This dashboard is intended for internal administrative use.
 ![alt text](image-1.png)
-
+## Drivers Management
 ![alt text](image-2.png)
-
+## Trucks/Fleet Management
 ![alt text](image-3.png)
-
+## Parties/Clients Management
 ![alt text](image-4.png)
-
+## Journey Management
 ![alt text](image-5.png)
-
+## Report Management
 ![alt text](image-6.png)
-
+## Driver Dashboard
 ![alt text](image-7.png)
-
+## Driver Assigned Truck
 ![alt text](image-8.png)
-
+## Driver JourneysS
 ![alt text](image-9.png)
 
 # This starts Celery Beat, the scheduler
