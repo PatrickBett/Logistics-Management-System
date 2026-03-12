@@ -90,8 +90,8 @@ This dashboard is intended for internal administrative use.
 ## Driver JourneysS
 ![alt text](image-9.png)
 
-# This starts Celery Beat, the scheduler
+## This starts Celery Beat, the scheduler
 celery -A backend beat --loglevel=info
 
-# To Start a Celery worker process.
+## To Start a Celery worker process.
 celery -A backend worker -l info
