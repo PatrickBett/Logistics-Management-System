@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-l77%qmn&*^@t%m9*)fd(qew2^(md_a^8!#4ekz+@&+y-31)&44
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['logistics-management-system-9kbs.onrender.com']
+ALLOWED_HOSTS = ['logistics-management-system-9kbs.onrender.com','localhost','127.0.0.1']
 
 
 # Application definition
@@ -193,3 +193,9 @@ AFRICASTALKING_API_KEY = os.getenv("AFRICASTALKING_API_KEY")
 
 # daphne
 ASGI_APPLICATION = "backend.asgi.application"
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://logistics-management-system-9kbs.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
