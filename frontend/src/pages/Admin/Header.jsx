@@ -26,24 +26,32 @@ function Header({ onToggleSidebar, sidebarOpen }) {
   const dec = access ? jwtDecode(access) : null;
   const username = dec?.username || "Driver";
 
-   useEffect(() => {
-     const ws = new WebSocket(
-       `wss://logistics-management-system-9kbs.onrender.com/ws/notifications/`,
-     );
+  useEffect(() => {
+    const ws = new WebSocket(
+      `wss://logistics-management-system-9kbs.onrender.com/ws/notifications/`,
+    );
 
-     ws.onopen = () => {
-       console.log("Notifications WebSocket connected");
-     };
-     ws.onmessage = (event) => {
-       const data = JSON.parse(event.data);
-       console.log("notifications",data)
-       setNotifications(data.drivers);
-     };
-     ws.onclose = () => console.log("Notifications Websocket closed");
-     return () => {
-       ws.close();
-     };
-   }, []);
+    ws.onopen = () => {
+      console.log("Notifications WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      setNotifications((prev) => [...prev, data]);
+      setUnreadCount((prev) => prev + 1);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("Notifications WebSocket closed");
+    };
+
+    return () => ws.close();
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -238,9 +246,7 @@ function Header({ onToggleSidebar, sidebarOpen }) {
               >
                 Update Profile
               </button>
-              
             </div>
-
           )}
         </div>
       </div>
