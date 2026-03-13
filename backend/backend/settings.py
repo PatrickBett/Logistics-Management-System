@@ -2,6 +2,7 @@ from datetime import timedelta
 from pathlib import Path
 from celery.schedules import crontab
 import os
+import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -108,11 +109,16 @@ CORS_ORIGIN_WHITELIST = [
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default="postgresql://neondb_owner:npg_LUFVj1w2svRD@ep-winter-shadow-aj7u5zcp-pooler.c-3.us-east-2.aws.neon.tech/Logisticsmanagementsystemdb?sslmode=require&channel_binding=require"
+    )
 }
 
 
