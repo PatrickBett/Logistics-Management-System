@@ -117,7 +117,7 @@ CORS_ORIGIN_WHITELIST = [
 # }
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgresql://neondb_owner:npg_LUFVj1w2svRD@ep-winter-shadow-aj7u5zcp-pooler.c-3.us-east-2.aws.neon.tech/Logisticsmanagementsystemdb?sslmode=require&channel_binding=require"
+        default=os.environ.get("DATABASE_URL")
     )
 }
 
