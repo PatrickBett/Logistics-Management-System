@@ -13,9 +13,9 @@ import { jwtDecode } from "jwt-decode";
 import UpdateProfile from "../Modals/UpdateProfile";
 
 function Header({ onToggleSidebar, sidebarOpen }) {
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
 
+  const { notifications, unreadCount, setUnreadCount } =
+    useContext(AdminContext);
   // States for UI Interaction
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUpdateDivOpen, setIsUpdateDivOpen] = useState(false);
@@ -36,6 +36,8 @@ function Header({ onToggleSidebar, sidebarOpen }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+
 
   const styles = {
     header: {

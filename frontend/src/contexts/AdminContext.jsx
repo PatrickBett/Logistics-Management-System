@@ -16,25 +16,49 @@ export const AdminProvider = ({ children }) => {
   const [parties, setParties] = useState([]);
   const [trucks, setTrucks] = useState([]);
   const [journeys, setJourneys] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [selectedStatus, setselectedStatus] = useState("All");
   // const [driversonleave, setDriversOnLeave] = useState("");
 
-  const token = localStorage.getItem("access")
-  useEffect(()=>{
-    const ws = new WebSocket(`wss://logistics-management-system-9kbs.onrender.com/ws/drivers/`)
+  const token = localStorage.getItem("access");
+  useEffect(() => {
+    const ws = new WebSocket(
+      `wss://logistics-management-system-9kbs.onrender.com/ws/drivers/`,
+    );
 
-     ws.onopen = () => {
+    ws.onopen = () => {
       console.log("Driver WebSocket connected");
     };
-    ws.onmessage = (event)=>{
-      const data = JSON.parse(event.data)
-      setDrivers(data.drivers)
-    }
-    ws.onclose = ()=> console.log("Driver Websocket closed")
-    return ()=>{
-      ws.close()
-    }
-  },[])
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setDrivers(data.drivers);
+      console.log("drivers data", data.drivers);
+    };
+    ws.onclose = () => console.log("Driver Websocket closed");
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    const ws = new WebSocket(
+      `wss://logistics-management-system-9kbs.onrender.com/ws/notifications/`,
+    );
+    ws.onopen = () => {
+      console.log("Notification WebSocket connected");
+    };
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setNotifications(data.notifications);
+      setUnreadCount(data.unread_count);
+      console.log("notifications data", data.notifications);
+    };
+    ws.onclose = () => {
+      console.log("Notification Websocket closed");
+    };
+  }, []);
+
   //fetch parties
   const fetchParties = async () => {
     try {
@@ -275,6 +299,9 @@ export const AdminProvider = ({ children }) => {
         isAuthenticated,
         setIsAuthenticated,
         drivers,
+        notifications,
+        unreadCount,
+        setUnreadCount,
         isLoading,
         setIsLoading,
         isEditingDriver,
