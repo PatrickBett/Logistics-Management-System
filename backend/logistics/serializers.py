@@ -57,7 +57,7 @@ class DriverRegisterSerializer(serializers.ModelSerializer):
         try:
             driver = Driver.objects.get(license_no=value)
         except Driver.DoesNotExist:
-            raise serializers.ValidationError("Invalid license number")
+            raise serializers.ValidationError("License number NOT Registered by Admin")
 
         if driver.user:
             raise serializers.ValidationError(
